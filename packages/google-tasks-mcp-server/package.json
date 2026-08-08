@@ -6,12 +6,13 @@
   "types": "./build/main.d.ts",
   "type": "module",
   "bin": {
-    "google-tasks-mcp-server": "./build/main.js"
+    "google-tasks-mcp-server": "./bin/google-tasks-mcp-server.js"
   },
   "files": [
     "build",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "bin"
   ],
   "keywords": [
     "mcp",

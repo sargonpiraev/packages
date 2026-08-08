@@ -6,12 +6,13 @@
   "types": "./build/main.d.ts",
   "type": "module",
   "bin": {
-    "confluence-mcp-server": "./build/main.js"
+    "confluence-mcp-server": "./bin/confluence-mcp-server.js"
   },
   "files": [
     "build",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "bin"
   ],
   "keywords": [
     "mcp",

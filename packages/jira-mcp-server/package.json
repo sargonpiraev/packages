@@ -6,12 +6,13 @@
   "types": "./build/main.d.ts",
   "type": "module",
   "bin": {
-    "jira-mcp-server": "./build/main.js"
+    "jira-mcp-server": "./bin/jira-mcp-server.js"
   },
   "files": [
     "build",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "bin"
   ],
   "keywords": [
     "mcp",

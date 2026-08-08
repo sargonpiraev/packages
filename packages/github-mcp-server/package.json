@@ -6,12 +6,13 @@
   "types": "./build/main.d.ts",
   "type": "module",
   "bin": {
-    "github-mcp-server": "./build/main.js"
+    "github-mcp-server": "./bin/github-mcp-server.js"
   },
   "files": [
     "build",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "bin"
   ],
   "keywords": [
     "mcp",

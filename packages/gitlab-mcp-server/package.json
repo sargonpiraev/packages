@@ -6,12 +6,13 @@
   "types": "./build/main.d.ts",
   "type": "module",
   "bin": {
-    "gitlab-mcp-server": "./build/main.js"
+    "gitlab-mcp-server": "./bin/gitlab-mcp-server.js"
   },
   "files": [
     "build",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "bin"
   ],
   "keywords": [
     "mcp",

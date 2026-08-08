@@ -1,6 +1,6 @@
 {
   "name": "@sargonpiraev/habitify-api-client",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "description": "A TypeScript client for the Habitify API with complete type safety and modern developer experience.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",

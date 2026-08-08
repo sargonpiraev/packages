@@ -29,3 +29,5 @@ https://github.com/sargonpiraev/packages/tree/main/packages/pulumi-gsc
 ## Release
 
 Published from the [`sargonpiraev/packages`](https://github.com/sargonpiraev/packages) monorepo via Trusted Publishing (`on-push-main.yml`).
+
+Release lane: Trusted Publisher on `on-push-main.yml`.

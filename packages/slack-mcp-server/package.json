@@ -6,12 +6,13 @@
   "types": "./build/index.d.ts",
   "type": "module",
   "bin": {
-    "slack-mcp-server": "./build/index.js"
+    "slack-mcp-server": "./bin/slack-mcp-server.js"
   },
   "files": [
     "build",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "bin"
   ],
   "keywords": [
     "mcp",
