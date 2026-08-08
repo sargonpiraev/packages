@@ -45,7 +45,8 @@
     "test": "jest --passWithNoTests --coverage"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "dependencies": {
     "@hey-api/client-axios": "^0.9.1",
