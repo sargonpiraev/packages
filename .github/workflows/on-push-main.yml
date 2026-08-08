@@ -31,7 +31,15 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
+      # Do not pass registry-url to setup-node — it writes an .npmrc that breaks
+      # npm Trusted Publishing (OIDC). Auth is OIDC-only; no NPM_TOKEN.
       - uses: sargonpiraev/ci/.github/actions/setup-node-npm-ci@main
+
+      - name: Verify OIDC + npm for trusted publishing
+        run: |
+          test -n "${ACTIONS_ID_TOKEN_REQUEST_URL}"
+          test -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}"
+          npm --version
 
       - run: npm run build
 
