@@ -1,0 +1,57 @@
+{
+  "name": "@sargonpiraev/pulumi-expo",
+  "version": "0.0.0",
+  "description": "Pulumi provider for Expo/EAS projects",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "type": "module",
+  "bin": {
+    "pulumi-resource-expo": "./bin/pulumi-resource-expo.js"
+  },
+  "files": [
+    "build",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "pulumi",
+    "provider",
+    "expo",
+    "infrastructure"
+  ],
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargonpiraev/packages.git",
+    "directory": "packages/pulumi-expo"
+  },
+  "homepage": "https://github.com/sargonpiraev/packages/tree/main/packages/pulumi-expo#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/packages/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint ./src --ext .ts",
+    "test": "jest --passWithNoTests --coverage"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "dependencies": {
+    "@pulumi/pulumi": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "^5.8.3"
+  }
+}

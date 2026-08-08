@@ -1,0 +1,65 @@
+{
+  "name": "@sargonpiraev/confluence-mcp-server",
+  "version": "1.2.0",
+  "description": "MCP server for Confluence Cloud REST API",
+  "main": "./build/main.js",
+  "types": "./build/main.d.ts",
+  "type": "module",
+  "bin": {
+    "confluence-mcp-server": "./build/main.js"
+  },
+  "files": [
+    "build",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "confluence"
+  ],
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargonpiraev/packages.git",
+    "directory": "packages/confluence-mcp-server"
+  },
+  "homepage": "https://github.com/sargonpiraev/packages/tree/main/packages/confluence-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/packages/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint ./src --ext .ts",
+    "test": "jest --passWithNoTests --coverage"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.0",
+    "dotenv": "^16.5.0",
+    "zod": "^3.24.3",
+    "axios": "^1.7.7",
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "^5.8.3",
+    "@types/express": "^4.17.17",
+    "@types/cors": "^2.8.13",
+    "@types/debug": "^4.1.12",
+    "@types/minimatch": "^5.1.2"
+  }
+}
