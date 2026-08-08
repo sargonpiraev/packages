@@ -1,9 +1,11 @@
 node_modules
 .turbo
 dist
+build
 coverage
 *.tsbuildinfo
 .DS_Store
 .env
 .env.*
 !.env.example
+junit.xml

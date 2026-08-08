@@ -1,0 +1,59 @@
+{
+  "name": "@sargonpiraev/habitify-api-client",
+  "version": "1.8.2",
+  "description": "A TypeScript client for the Habitify API with complete type safety and modern developer experience.",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "type": "module",
+  "files": [
+    "build",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "api-client",
+    "typescript",
+    "sdk",
+    "habitify",
+    "habits",
+    "productivity",
+    "tracking"
+  ],
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com",
+    "url": "https://sargonpiraev.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargonpiraev/packages.git",
+    "directory": "packages/habitify-api-client"
+  },
+  "homepage": "https://github.com/sargonpiraev/packages/tree/main/packages/habitify-api-client#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/packages/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint ./src --ext .ts",
+    "test": "jest --passWithNoTests --coverage",
+    "test:request": "tsx script/test-request.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "axios": "^1.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "dotenv": "^17.0.1",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
