@@ -1,8 +1,17 @@
-remotes:
-  - git_url: https://github.com/sargonpiraev/ci
-    ref: main
-    configs:
-      - lefthook.yml
+# Local hooks (audit stays in CI via sargonpiraev/ci on-push-main).
+commit-msg:
+  commands:
+    commitlint:
+      run: npx commitlint --edit {1}
 
-exclude_tags:
-  - audit
+pre-push:
+  parallel: true
+  commands:
+    lint:
+      run: npm run lint
+    check-types:
+      run: npm run check-types
+    build:
+      run: npm run build
+    test:
+      run: npm run test
