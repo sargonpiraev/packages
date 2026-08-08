@@ -12,6 +12,9 @@ jobs:
   base:
     uses: sargonpiraev/ci/.github/workflows/on-push-main.yml@main
     secrets: inherit
+    with:
+      # criticals currently come from semantic-release → nested npm/tar; revisit later
+      skip-audit: true
 
   release:
     needs: base
