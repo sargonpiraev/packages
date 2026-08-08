@@ -25,3 +25,7 @@ pulumi plugin install resource gsc v0.1.0 --file "$(npm root)/@sargonpiraev/pulu
 ## Home
 
 https://github.com/sargonpiraev/packages/tree/main/packages/pulumi-gsc
+
+## Release
+
+Published from the [`sargonpiraev/packages`](https://github.com/sargonpiraev/packages) monorepo via Trusted Publishing (`on-push-main.yml`).

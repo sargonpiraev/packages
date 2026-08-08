@@ -21,3 +21,7 @@ npx @sargonpiraev/github-mcp-server
 ```
 
 Configure API credentials via environment variables (see `.env.example` when provided).
+
+## Release
+
+Published from the [`sargonpiraev/packages`](https://github.com/sargonpiraev/packages) monorepo via Trusted Publishing (`on-push-main.yml`).

@@ -25,3 +25,7 @@ pulumi plugin install resource expo v0.1.0 --file "$(npm root)/@sargonpiraev/pul
 ## Home
 
 https://github.com/sargonpiraev/packages/tree/main/packages/pulumi-expo
+
+## Release
+
+Published from the [`sargonpiraev/packages`](https://github.com/sargonpiraev/packages) monorepo via Trusted Publishing (`on-push-main.yml`).
