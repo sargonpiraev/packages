@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Product env.harness.json",
+  "description": "Transitional: lists required env key NAMES (no values/secrets) per app when that app lacks apps/<app>/src/env.ts Zod SSOT. Prefer env.ts + codegen for .env.example. Companion .env.example at apps/<app>/.env.example (or root for \".\"). Do not commit real .env. Shipped by @sargonpiraev/eslint-config.",
+  "type": "object",
+  "required": ["requiredKeys"],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "requiredKeys": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "enum": [
+          ".",
+          "webapp",
+          "docapp",
+          "extapp",
+          "mobapp",
+          "jobapp",
+          "admapp"
+        ]
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$",
+          "minLength": 1
+        },
+        "uniqueItems": true,
+        "minItems": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}

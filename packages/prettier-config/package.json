@@ -1,0 +1,45 @@
+{
+  "name": "@sargonpiraev/prettier-config",
+  "version": "0.0.0",
+  "description": "Shared Prettier config for sargonpiraev products and packages",
+  "main": "./index.json",
+  "files": [
+    "index.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "prettier",
+    "prettier-config"
+  ],
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargonpiraev/packages.git",
+    "directory": "packages/prettier-config"
+  },
+  "homepage": "https://github.com/sargonpiraev/packages/tree/main/packages/prettier-config#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/packages/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "node -e \"console.log('noop build'); process.exit(0)\"",
+    "check-types": "node -e \"console.log('noop check-types'); process.exit(0)\"",
+    "lint": "node -e \"console.log('noop lint'); process.exit(0)\"",
+    "test": "node -e \"const c=require('./index.json'); if(c.printWidth!==100) process.exit(1)\""
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "peerDependencies": {
+    "prettier": ">=3.0.0"
+  }
+}

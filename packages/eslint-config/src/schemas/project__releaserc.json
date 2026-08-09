@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Product/package .releaserc.json",
+  "description": "semantic-release shape for publishable packages. branches must include main; plugins must include commit-analyzer, release-notes-generator, npm, github. No npm token fields. Shipped by @sargonpiraev/eslint-config.",
+  "type": "object",
+  "required": ["branches", "plugins"],
+  "properties": {
+    "branches": {
+      "type": "array",
+      "minItems": 1,
+      "contains": {
+        "anyOf": [
+          { "const": "main" },
+          {
+            "type": "object",
+            "properties": { "name": { "const": "main" } },
+            "required": ["name"]
+          }
+        ]
+      }
+    },
+    "plugins": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "anyOf": [
+          { "type": "string", "minLength": 1 },
+          {
+            "type": "array",
+            "minItems": 1,
+            "items": [{ "type": "string", "minLength": 1 }]
+          }
+        ]
+      },
+      "allOf": [
+        {
+          "contains": {
+            "anyOf": [
+              { "const": "@semantic-release/commit-analyzer" },
+              {
+                "type": "array",
+                "items": [{ "const": "@semantic-release/commit-analyzer" }]
+              }
+            ]
+          }
+        },
+        {
+          "contains": {
+            "anyOf": [
+              { "const": "@semantic-release/release-notes-generator" },
+              {
+                "type": "array",
+                "items": [
+                  { "const": "@semantic-release/release-notes-generator" }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "contains": {
+            "anyOf": [
+              { "const": "@semantic-release/npm" },
+              {
+                "type": "array",
+                "items": [{ "const": "@semantic-release/npm" }]
+              }
+            ]
+          }
+        },
+        {
+          "contains": {
+            "anyOf": [
+              { "const": "@semantic-release/github" },
+              {
+                "type": "array",
+                "items": [{ "const": "@semantic-release/github" }]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "additionalProperties": true
+}

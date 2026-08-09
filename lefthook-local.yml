@@ -1,0 +1,4 @@
+exclude_tags:
+  - audit
+pre-push:
+  parallel: false

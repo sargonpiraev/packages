@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project/shared Nx project.json",
+  "description": "Required test targets for project/shared project.json. Checks use the test:* namespace; build is separate. Playwright lane targets test:functional / test:seo / test:analytics are optional (declare when the project has webapp/docapp/extapp narrow-integration harness). Orchestration targets such as git:status are optional (not a governance gate). Shipped by @sargonpiraev/eslint-config.",
+  "type": "object",
+  "required": ["name", "tags", "targets"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "contains": {
+        "enum": ["project", "shared"]
+      },
+      "minContains": 1
+    },
+    "targets": {
+      "type": "object",
+      "required": [
+        "test",
+        "test:unit",
+        "test:lint",
+        "test:check-types",
+        "test:spec",
+        "test:visual",
+        "test:format",
+        "build"
+      ],
+      "properties": {
+        "test": { "type": "object" },
+        "test:unit": { "type": "object" },
+        "test:lint": { "type": "object" },
+        "test:check-types": { "type": "object" },
+        "test:spec": { "type": "object" },
+        "test:functional": { "type": "object" },
+        "test:seo": { "type": "object" },
+        "test:analytics": { "type": "object" },
+        "test:visual": { "type": "object" },
+        "test:format": { "type": "object" },
+        "build": { "type": "object" },
+        "git:status": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  },
+
+  "additionalProperties": true
+}

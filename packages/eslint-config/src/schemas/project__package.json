@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project/shared package.json test scripts",
+  "description": "Required npm script names for project/shared package.json. Checks use the test:* namespace; build is separate. test:format must be prettier --check (not write-only / noop). prettier must reference @sargonpiraev/prettier-config. Optional Playwright lane scripts when the project has a webapp/docapp/extapp harness. Shipped by @sargonpiraev/eslint-config.",
+  "type": "object",
+  "required": ["scripts", "prettier"],
+  "properties": {
+    "prettier": {
+      "const": "@sargonpiraev/prettier-config",
+      "description": "Must extend the shared Prettier config package."
+    },
+    "scripts": {
+      "type": "object",
+      "required": [
+        "test",
+        "test:unit",
+        "test:lint",
+        "test:check-types",
+        "test:spec",
+        "test:visual",
+        "test:format",
+        "build"
+      ],
+      "properties": {
+        "test": { "type": "string", "minLength": 1 },
+        "test:unit": { "type": "string", "minLength": 1 },
+        "test:lint": { "type": "string", "minLength": 1 },
+        "test:check-types": { "type": "string", "minLength": 1 },
+        "test:spec": { "type": "string", "minLength": 1 },
+        "test:functional": { "type": "string", "minLength": 1 },
+        "test:seo": { "type": "string", "minLength": 1 },
+        "test:analytics": { "type": "string", "minLength": 1 },
+        "test:visual": { "type": "string", "minLength": 1 },
+        "test:format": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "prettier([\\s\\S]*--check|--check)",
+          "description": "Must run prettier --check (not --write-only / noop)."
+        },
+        "build": { "type": "string", "minLength": 1 },
+        "pulumi:preview": { "type": "string", "minLength": 1 },
+        "pulumi:up": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    },
+    "publishConfig": {
+      "type": "object",
+      "description": "Public packages should set access public + provenance for OIDC Trusted Publishing.",
+      "properties": {
+        "access": { "type": "string" },
+        "provenance": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

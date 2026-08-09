@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Playwright harness — webapp / docapp",
+  "description": "Laconic static gate for apps/webapp and apps/docapp. File: apps/<app>/playwright.harness.json. Required Playwright project names: functional, seo, analytics, visual. Mobile variants (functional-mobile, visual-mobile, …) are allowed. playwright.config.ts project `name` values MUST match this list (import or duplicate — keep simple). Narrow integration only: app up, mock externals. No e2e suite names.",
+  "type": "object",
+  "required": ["app", "projects"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "app": {
+      "type": "string",
+      "enum": ["webapp", "docapp"]
+    },
+
+    "projects": {
+      "type": "array",
+      "description": "Playwright config project names. Must include functional, seo, analytics, visual. Optional *-mobile variants OK.",
+      "items": {
+        "type": "string",
+        "pattern": "^(functional|seo|analytics|visual)(-[a-z0-9]+)?$"
+      },
+      "uniqueItems": true,
+      "minItems": 4,
+      "allOf": [
+        { "contains": { "const": "functional" } },
+        { "contains": { "const": "seo" } },
+        { "contains": { "const": "analytics" } },
+        { "contains": { "const": "visual" } }
+      ]
+    },
+    "coverage": {
+      "type": "object",
+      "description": "Optional coverage wiring hint. Collect when feasible (nextcov for Next apps); no thresholds yet; report artifacts per project.",
+      "properties": {
+        "collector": {
+          "type": "string",
+          "enum": ["nextcov", "none"]
+        },
+        "reportDir": {
+          "type": "string",
+          "minLength": 1
+        },
+        "thresholds": {
+          "type": "boolean",
+          "const": false,
+          "description": "Thresholds are not enforced yet; omit or set false."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

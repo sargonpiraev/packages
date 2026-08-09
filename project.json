@@ -59,9 +59,37 @@
         "cwd": "packages"
       }
     },
-    "test:types": {
+    "test:check-types": {
       "cache": false,
-      "command": "npm run test:types",
+      "command": "npm run test:check-types",
+      "options": {
+        "cwd": "packages"
+      }
+    },
+    "test:spec": {
+      "cache": false,
+      "command": "npm run test:spec",
+      "options": {
+        "cwd": "packages"
+      }
+    },
+    "test:visual": {
+      "cache": false,
+      "command": "npm run test:visual",
+      "options": {
+        "cwd": "packages"
+      }
+    },
+    "test:format": {
+      "cache": false,
+      "command": "npm run test:format",
+      "options": {
+        "cwd": "packages"
+      }
+    },
+    "git:status": {
+      "cache": false,
+      "command": "git status -sb",
       "options": {
         "cwd": "packages"
       }

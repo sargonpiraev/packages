@@ -1,0 +1,4 @@
+build/__tests__/
+coverage/
+src/
+*.tgz

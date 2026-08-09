@@ -1,0 +1,5 @@
+{
+  "$schema": "./node_modules/@sargonpiraev/eslint-config/build/schemas/project__repo-harness.json",
+  "layout": "turbo-lib",
+  "apps": []
+}

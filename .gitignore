@@ -9,3 +9,9 @@ coverage
 .env.*
 !.env.example
 junit.xml
+.env.local
+node_modules/
+.pulumi/
+test-results/
+playwright-report/
+.next/
