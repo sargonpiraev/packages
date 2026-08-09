@@ -1,17 +1,10 @@
-# Local hooks (audit stays in CI via sargonpiraev/ci on-push-main).
-commit-msg:
-  commands:
-    commitlint:
-      run: npx commitlint --edit {1}
+# yaml-language-server: $schema=./node_modules/@sargonpiraev/eslint-config/build/schemas/project__lefthook.json
+remotes:
+  - git_url: https://github.com/sargonpiraev/ci
+    ref: main
+    configs:
+      - lefthook.yml
 
-pre-push:
-  parallel: true
-  commands:
-    lint:
-      run: npm run lint
-    check-types:
-      run: npm run check-types
-    build:
-      run: npm run build
-    test:
-      run: npm run test
+# Audit stays in CI on-push-main (parity with workflow skip-audit).
+exclude_tags:
+  - audit

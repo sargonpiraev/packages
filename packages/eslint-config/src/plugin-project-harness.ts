@@ -122,8 +122,8 @@ const inventoryRule: Rule.RuleModule = {
       flatNextForbidden:
         'flat-root Next project app is forbidden; use turbo monorepo with apps/webapp (etc.).',
       missingEnvHarness:
-        'apps {{apps}} require apps/<app>/src/env.ts (Zod SSOT) or transitional env.harness.json.',
-      missingEnvExample: 'missing {{path}} for env contract (generate from env.ts Zod schemas).',
+        'apps {{apps}} require env.harness.json with requiredKeys (names-only).',
+      missingEnvExample: 'missing {{path}} for env.harness.json contract.',
       missingEnvKeys: '{{path}} missing required keys: {{keys}}',
       missingPulumiYaml: 'pulumi/ exists but pulumi/Pulumi.yaml is missing.',
       missingPulumiEntry:
@@ -260,39 +260,16 @@ const inventoryRule: Rule.RuleModule = {
         if (envApps.length > 0) {
           const envPath = path.join(root, 'env.harness.json')
           const env = readJsonFile<EnvHarness>(envPath)
-          const appsWithEnvTs = envApps.filter((app) =>
-            [
-              path.join(root, 'apps', app, 'src', 'env.ts'),
-              path.join(root, 'apps', app, 'env.ts'),
-            ].some((p) => fs.existsSync(p)),
-          )
-          const appsMissingSsot = envApps.filter(
-            (app) => !appsWithEnvTs.includes(app),
-          )
 
-          // Prefer Zod env.ts SSOT; env.harness.json remains transitional.
-          if (appsMissingSsot.length > 0 && !env?.requiredKeys) {
+          // Names-only env.harness.json + .env.example (no env.ts SSOT).
+          if (!env?.requiredKeys) {
             context.report({
               node,
               messageId: 'missingEnvHarness',
-              data: { apps: appsMissingSsot.join(', ') },
+              data: { apps: envApps.join(', ') },
             })
-          }
-
-          for (const app of appsWithEnvTs) {
-            const example = envExamplePath(root, app)
-            if (!fs.existsSync(example)) {
-              context.report({
-                node,
-                messageId: 'missingEnvExample',
-                data: { path: path.relative(root, example) },
-              })
-            }
-          }
-
-          if (env?.requiredKeys) {
+          } else {
             for (const [appKey, keys] of Object.entries(env.requiredKeys)) {
-              if (appsWithEnvTs.includes(appKey)) continue
               const example = envExamplePath(root, appKey)
               if (!fs.existsSync(example)) {
                 context.report({

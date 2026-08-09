@@ -17,6 +17,7 @@ const projectPulumiHarness = requireJson(
 )
 const projectTsconfig = requireJson('./schemas/project__tsconfig.json')
 const projectReleaserc = requireJson('./schemas/project__releaserc.json')
+const projectLefthook = requireJson('./schemas/project__lefthook.json')
 
 export const schemas = {
   projectProject,
@@ -28,6 +29,7 @@ export const schemas = {
   projectPulumiHarness,
   projectTsconfig,
   projectReleaserc,
+  projectLefthook,
   appPlaywrightWebapp,
   appPlaywrightExtapp,
 } as const

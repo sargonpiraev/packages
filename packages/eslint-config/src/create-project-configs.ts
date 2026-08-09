@@ -84,6 +84,7 @@ export function createProjectConfigs(
   ])
   // Package-level .releaserc.json (e.g. packages/packages/*) + project root
   const releasercFiles = expand(scope, ['.releaserc.json'])
+  const lefthookFiles = expandRoot(scope, ['lefthook.yml', 'lefthook.yaml'])
   const packageJsonFiles = expandRoot(scope, ['package.json'])
 
   return [
@@ -191,6 +192,15 @@ export function createProjectConfigs(
         ]),
         'project-harness/workflow-no-npm-token': 'error',
       },
+    },
+    {
+      files: lefthookFiles,
+      rules: schemaRule([
+        {
+          fileMatch: lefthookFiles,
+          schema: schemas.projectLefthook,
+        },
+      ]),
     },
   ]
 }

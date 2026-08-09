@@ -27,6 +27,12 @@ describe('createProjectConfigs', () => {
       (c) => Array.isArray(c.files) && c.files.includes('tsconfig.base.json'),
     )
     assert.ok(tsconfig)
+
+    const lefthook = configs.find(
+      (c) => Array.isArray(c.files) && c.files.includes('lefthook.yml'),
+    )
+    assert.ok(lefthook)
+    assert.ok(lefthook.files?.includes('lefthook.yaml'))
   })
 
   it('prefixes sibling root globs for meta scope (not deep package.json)', () => {
@@ -41,6 +47,11 @@ describe('createProjectConfigs', () => {
       false,
     )
     assert.ok(inventory.files?.includes('*/.cursor/worktrees.json'))
+
+    const lefthook = configs.find(
+      (c) => Array.isArray(c.files) && c.files.includes('*/lefthook.yml'),
+    )
+    assert.ok(lefthook)
   })
 
   it('exports project schemas and canonical apps', () => {
@@ -49,6 +60,8 @@ describe('createProjectConfigs', () => {
     assert.ok(schemas.projectEnvHarness)
     assert.ok(schemas.projectTsconfig)
     assert.ok(schemas.projectReleaserc)
+    assert.ok(schemas.projectLefthook)
+    assert.deepEqual(schemas.projectLefthook.required, ['remotes'])
     assert.deepEqual(
       schemas.appPlaywrightWebapp.required,
       expectArrayContaining(
