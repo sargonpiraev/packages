@@ -7,7 +7,7 @@ Shared ESLint flat-config presets + JSON schemas for project inventory / harness
 | Nx / scripts | `project.json`, `package.json` (`test:*`, `build`, `prettier`, `test:format` = `prettier --check`, `prepare` = `lefthook install`) |
 | Worktrees | `.cursor/worktrees.json` |
 | Workflow / release | `.github/workflows/on-push-main.yml` (calls `sargonpiraev/ci`; no `NPM_TOKEN`) |
-| Playwright | `apps/*/playwright.harness.json` |
+| Playwright | `playwright.config.ts` / `apps/{webapp,docapp,extapp}/playwright.config.ts` via `project-harness/playwright-config` (eval projects + suite specs) |
 | Repo / apps | `repo.harness.json` + disk `apps/*` allowlist |
 | Prettier | `package.json#prettier` → `@sargonpiraev/prettier-config` |
 | TypeScript | root `tsconfig.json` / `tsconfig.base.json` extends `@sargonpiraev/tsconfig` |
@@ -43,7 +43,7 @@ eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-er
   "repo.harness.json" "env.harness.json" "pulumi.harness.json" \
   "tsconfig.json" "tsconfig.base.json" ".releaserc.json" \
   ".github/workflows/on-push-main.yml" \
-  "playwright.harness.json" "apps/*/playwright.harness.json" \
+  "playwright.config.ts" "apps/*/playwright.config.ts" \
   "lefthook.yml" "lefthook.yaml" ".gitignore"
 ```
 
@@ -78,6 +78,17 @@ remotes:
 { "entry": "index.ts" }
 ```
 
+### Playwright eval gate
+
+`project-harness/playwright-config` loads each in-scope `playwright.config.ts` (via `jiti`) and checks:
+
+| App path | Required `projects[].name` | Specs on disk |
+|---|---|---|
+| `apps/webapp`, `apps/docapp`, or flat-root `playwright.config.ts` | `functional`, `seo`, `analytics`, `visual` (`*-mobile` OK) | at least one `*.<suite>.spec.ts` per required suite |
+| `apps/extapp` | `functional`, `visual` | same |
+
+Also requires each required project's `testMatch` to cover `*.<suite>.spec.ts`. No separate `playwright.harness.json`.
+
 ## Meta usage
 
 ```js
@@ -106,6 +117,7 @@ export default [
 | missing `lefthook.yml` / `lefthook.yaml` | add remotes → `sargonpiraev/ci` + `"prepare": "lefthook install"` |
 | `scripts.prepare` missing / not `lefthook install` | add `"prepare": "lefthook install"` (+ `lefthook` devDependency) |
 | lefthook without `remotes` → `sargonpiraev/ci` | pull shared `lefthook.yml` via remotes (no local hook duplication) |
+| playwright config missing required projects / specs | add named projects + `*.<suite>.spec.ts` files |
 
 ## Schemas (IDE `$schema`)
 
@@ -120,8 +132,6 @@ export default [
 @sargonpiraev/eslint-config/schemas/project__lefthook.json
 @sargonpiraev/eslint-config/schemas/project__worktrees.json
 @sargonpiraev/eslint-config/schemas/project__workflow-on-push-main.json
-@sargonpiraev/eslint-config/schemas/app__playwright-webapp.json
-@sargonpiraev/eslint-config/schemas/app__playwright-extapp.json
 ```
 
 ## License

@@ -64,14 +64,20 @@ export function createProjectConfigs(
     'package.json',
     '.cursor/worktrees.json',
   ])
-  const webappHarnessFiles = expand(scope, [
-    'playwright.harness.json',
-    'apps/webapp/playwright.harness.json',
-    'apps/docapp/playwright.harness.json',
-  ])
-  const extappHarnessFiles = expand(scope, [
-    'apps/extapp/playwright.harness.json',
-  ])
+  const playwrightConfigFiles =
+    scope === 'project'
+      ? [
+          'playwright.config.ts',
+          'apps/webapp/playwright.config.ts',
+          'apps/docapp/playwright.config.ts',
+          'apps/extapp/playwright.config.ts',
+        ]
+      : [
+          '*/playwright.config.ts',
+          '*/apps/webapp/playwright.config.ts',
+          '*/apps/docapp/playwright.config.ts',
+          '*/apps/extapp/playwright.config.ts',
+        ]
   const workflowFiles = expandRoot(scope, [
     '.github/workflows/on-push-main.yml',
   ])
@@ -166,22 +172,14 @@ export function createProjectConfigs(
       ]),
     },
     {
-      files: webappHarnessFiles,
-      rules: schemaRule([
-        {
-          fileMatch: webappHarnessFiles,
-          schema: schemas.appPlaywrightWebapp,
-        },
-      ]),
-    },
-    {
-      files: extappHarnessFiles,
-      rules: schemaRule([
-        {
-          fileMatch: extappHarnessFiles,
-          schema: schemas.appPlaywrightExtapp,
-        },
-      ]),
+      files: playwrightConfigFiles,
+      plugins: {
+        'project-harness': projectHarnessPlugin,
+      },
+      processor: 'project-harness/playwright-config',
+      rules: {
+        'project-harness/playwright-config': 'error',
+      },
     },
     {
       files: workflowFiles,

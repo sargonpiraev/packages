@@ -60,6 +60,9 @@
     "access": "public",
     "provenance": true
   },
+  "dependencies": {
+    "jiti": "^2.7.0"
+  },
   "peerDependencies": {
     "eslint": ">=9.0.0",
     "eslint-plugin-json-schema-validator": ">=6.0.0"

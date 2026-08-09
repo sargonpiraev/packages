@@ -3,10 +3,14 @@ import { describe, it } from 'node:test'
 import {
   CANONICAL_APP_NAMES,
   createProjectConfigs,
+  inferPlaywrightAppKind,
+  isAllowedProjectName,
   patternCoversPulumiEnv,
   patternCoversPulumiState,
   patternIgnoresWholePulumiTree,
+  REQUIRED_PLAYWRIGHT_PROJECTS,
   schemas,
+  testMatchCoversSuite,
 } from '../index.js'
 
 describe('createProjectConfigs', () => {
@@ -45,6 +49,19 @@ describe('createProjectConfigs', () => {
       gitignore.rules?.['project-harness/pulumi-gitignore'],
       'error',
     )
+
+    const playwright = configs.find(
+      (c) =>
+        Array.isArray(c.files) &&
+        c.files.includes('apps/webapp/playwright.config.ts'),
+    )
+    assert.ok(playwright)
+    assert.ok(playwright.files?.includes('playwright.config.ts'))
+    assert.ok(playwright.files?.includes('apps/extapp/playwright.config.ts'))
+    assert.equal(
+      playwright.rules?.['project-harness/playwright-config'],
+      'error',
+    )
   })
 
   it('prefixes sibling root globs for meta scope (not deep package.json)', () => {
@@ -72,6 +89,14 @@ describe('createProjectConfigs', () => {
         c.files.includes('.gitignore'),
     )
     assert.ok(gitignore)
+
+    const playwright = configs.find(
+      (c) =>
+        Array.isArray(c.files) &&
+        c.files.includes('*/apps/webapp/playwright.config.ts'),
+    )
+    assert.ok(playwright)
+    assert.ok(playwright.files?.includes('*/playwright.config.ts'))
   })
 
   it('accepts reasonable pulumi gitignore pattern equivalents', () => {
@@ -107,27 +132,49 @@ describe('createProjectConfigs', () => {
     ).properties.scripts
     assert.ok(packageScripts.required.includes('prepare'))
     assert.match(packageScripts.properties.prepare.pattern, /lefthook/)
-    assert.deepEqual(
-      schemas.appPlaywrightWebapp.required,
-      expectArrayContaining(
-        ['app', 'projects'],
-        schemas.appPlaywrightWebapp.required,
-      ),
-    )
-    assert.equal(
-      (schemas.appPlaywrightExtapp.properties as { app: { const: string } }).app
-        .const,
-      'extapp',
-    )
+    assert.ok(!('appPlaywrightWebapp' in schemas))
+    assert.ok(!('appPlaywrightExtapp' in schemas))
     assert.ok(CANONICAL_APP_NAMES.includes('webapp'))
     assert.ok(CANONICAL_APP_NAMES.includes('admapp'))
   })
-})
 
-function expectArrayContaining(expected: string[], actual: unknown): string[] {
-  assert.ok(Array.isArray(actual))
-  for (const item of expected) {
-    assert.ok(actual.includes(item), `missing ${item}`)
-  }
-  return actual as string[]
-}
+  it('infers playwright app kind and suite matrix', () => {
+    assert.equal(
+      inferPlaywrightAppKind('/repo/apps/webapp/playwright.config.ts'),
+      'webapp',
+    )
+    assert.equal(
+      inferPlaywrightAppKind('/repo/apps/docapp/playwright.config.ts'),
+      'docapp',
+    )
+    assert.equal(
+      inferPlaywrightAppKind('/repo/apps/extapp/playwright.config.ts'),
+      'extapp',
+    )
+    assert.equal(
+      inferPlaywrightAppKind('/repo/playwright.config.ts'),
+      'webapp',
+    )
+    assert.equal(
+      inferPlaywrightAppKind('/repo/apps/admapp/playwright.config.ts'),
+      null,
+    )
+    assert.deepEqual(REQUIRED_PLAYWRIGHT_PROJECTS.webapp, [
+      'functional',
+      'seo',
+      'analytics',
+      'visual',
+    ])
+    assert.deepEqual(REQUIRED_PLAYWRIGHT_PROJECTS.extapp, [
+      'functional',
+      'visual',
+    ])
+    assert.equal(isAllowedProjectName('webapp', 'visual-mobile'), true)
+    assert.equal(isAllowedProjectName('extapp', 'visual-mobile'), false)
+    assert.equal(
+      testMatchCoversSuite('**/*.functional.spec.ts', 'functional'),
+      true,
+    )
+    assert.equal(testMatchCoversSuite('**/*.seo.spec.ts', 'functional'), false)
+  })
+})

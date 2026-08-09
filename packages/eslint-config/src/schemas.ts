@@ -2,8 +2,6 @@ import { createRequire } from 'node:module'
 
 const requireJson = createRequire(import.meta.url)
 
-const appPlaywrightExtapp = requireJson('./schemas/app__playwright-extapp.json')
-const appPlaywrightWebapp = requireJson('./schemas/app__playwright-webapp.json')
 const projectPackage = requireJson('./schemas/project__package.json')
 const projectProject = requireJson('./schemas/project__project.json')
 const projectWorkflowOnPushMain = requireJson(
@@ -30,6 +28,4 @@ export const schemas = {
   projectTsconfig,
   projectReleaserc,
   projectLefthook,
-  appPlaywrightWebapp,
-  appPlaywrightExtapp,
 } as const

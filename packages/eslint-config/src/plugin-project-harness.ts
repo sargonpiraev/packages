@@ -8,6 +8,7 @@ import {
   PRETTIER_CONFIG_PACKAGE,
   TSCONFIG_PACKAGE_PREFIX,
 } from './canonical-apps.js'
+import { playwrightConfigRule } from './playwright-config-rule.js'
 
 type RepoHarness = {
   layout?: string
@@ -507,19 +508,24 @@ const pulumiGitignoreRule: Rule.RuleModule = {
   },
 }
 
-/** Turn .gitignore into a tiny JS module so ESLint can attach rules. */
-const gitignoreProcessor: Linter.Processor = {
-  meta: {
-    name: 'gitignore',
-    version: '0.0.0',
-  },
-  preprocess() {
-    return ['\n']
-  },
-  postprocess(messages: Linter.LintMessage[][]) {
-    return messages[0] ?? []
-  },
+/** Turn non-JS files into a tiny JS module so ESLint can attach rules. */
+function passthroughProcessor(name: string): Linter.Processor {
+  return {
+    meta: {
+      name,
+      version: '0.0.0',
+    },
+    preprocess() {
+      return ['\n']
+    },
+    postprocess(messages: Linter.LintMessage[][]) {
+      return messages[0] ?? []
+    },
+  }
 }
+
+const gitignoreProcessor = passthroughProcessor('gitignore')
+const playwrightConfigProcessor = passthroughProcessor('playwright-config')
 
 export const projectHarnessPlugin: ESLint.Plugin = {
   meta: {
@@ -528,10 +534,12 @@ export const projectHarnessPlugin: ESLint.Plugin = {
   },
   processors: {
     gitignore: gitignoreProcessor,
+    'playwright-config': playwrightConfigProcessor,
   },
   rules: {
     inventory: inventoryRule,
     'workflow-no-npm-token': workflowTokenRule,
     'pulumi-gitignore': pulumiGitignoreRule,
+    'playwright-config': playwrightConfigRule,
   },
 }
