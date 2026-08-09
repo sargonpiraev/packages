@@ -10,7 +10,10 @@
     "generate": "turbo run generate",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "release": "multi-semantic-release",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "test:unit": "turbo run test",
+    "test:lint": "npm run lint",
+    "test:types": "npm run check-types"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
@@ -40,5 +43,6 @@
   "packageManager": "npm@10.9.4",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "$schema": "../schema/project__package.json"
 }

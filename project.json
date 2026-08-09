@@ -1,32 +1,70 @@
 {
   "name": "packages",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../schema/project__project.json",
   "projectType": "library",
-  "tags": ["shared", "type:lib", "stack:npm", "status:active"],
+  "tags": [
+    "shared",
+    "type:lib",
+    "stack:npm",
+    "status:active"
+  ],
   "metadata": {
     "description": "Public npm packages (API clients, Pulumi providers, MCP servers)",
-    "technologies": ["typescript", "turbo", "npm"]
+    "technologies": [
+      "typescript",
+      "turbo",
+      "npm"
+    ]
   },
   "targets": {
     "lint": {
       "cache": false,
       "command": "npm run lint",
-      "options": { "cwd": "packages" }
+      "options": {
+        "cwd": "packages"
+      }
     },
     "check-types": {
       "cache": false,
       "command": "npm run check-types",
-      "options": { "cwd": "packages" }
+      "options": {
+        "cwd": "packages"
+      }
     },
     "build": {
       "cache": false,
       "command": "npm run build",
-      "options": { "cwd": "packages" }
+      "options": {
+        "cwd": "packages"
+      }
     },
     "test": {
       "cache": false,
       "command": "npm run test",
-      "options": { "cwd": "packages" }
+      "options": {
+        "cwd": "packages"
+      }
+    },
+    "test:unit": {
+      "cache": false,
+      "command": "npm run test:unit",
+      "options": {
+        "cwd": "packages"
+      }
+    },
+    "test:lint": {
+      "cache": false,
+      "command": "npm run test:lint",
+      "options": {
+        "cwd": "packages"
+      }
+    },
+    "test:types": {
+      "cache": false,
+      "command": "npm run test:types",
+      "options": {
+        "cwd": "packages"
+      }
     }
   }
 }

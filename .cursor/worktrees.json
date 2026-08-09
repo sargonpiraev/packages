@@ -1,0 +1,6 @@
+{
+  "$schema": "../../schema/project__worktrees.json",
+  "setup-worktree-unix": [
+    "npm ci"
+  ]
+}
