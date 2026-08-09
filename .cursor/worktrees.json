@@ -1,6 +1,7 @@
 {
   "$schema": "../../schema/project__worktrees.json",
   "setup-worktree-unix": [
-    "npm ci"
+    "npm ci",
+    "npx lefthook install"
   ]
 }

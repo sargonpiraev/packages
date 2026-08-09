@@ -4,7 +4,7 @@ Shared ESLint flat-config presets + JSON schemas for project inventory / harness
 
 | Gate | Files |
 |---|---|
-| Nx / scripts | `project.json`, `package.json` (`test:*`, `build`, `prettier`, `test:format` = `prettier --check`) |
+| Nx / scripts | `project.json`, `package.json` (`test:*`, `build`, `prettier`, `test:format` = `prettier --check`, `prepare` = `lefthook install`) |
 | Worktrees | `.cursor/worktrees.json` |
 | Workflow / release | `.github/workflows/on-push-main.yml` (calls `sargonpiraev/ci`; no `NPM_TOKEN`) |
 | Playwright | `apps/*/playwright.harness.json` |
@@ -12,9 +12,9 @@ Shared ESLint flat-config presets + JSON schemas for project inventory / harness
 | Prettier | `package.json#prettier` → `@sargonpiraev/prettier-config` |
 | TypeScript | root `tsconfig.json` / `tsconfig.base.json` extends `@sargonpiraev/tsconfig` |
 | Env | `env.harness.json` names-only `requiredKeys` + hand-maintained `.env.example` |
-| Pulumi | if `pulumi/` exists: `Pulumi.yaml`, TS entry, `pulumi:preview` / `pulumi:up` |
+| Pulumi | if `pulumi/` exists: `Pulumi.yaml`, TS entry, `pulumi:preview` / `pulumi:up`, `.gitignore` ignores `.env` + `.pulumi` (not whole `pulumi/`) |
 | semantic-release | `.releaserc.json` shape when present |
-| Lefthook | `lefthook.yml` / `lefthook.yaml` must `remotes` → `sargonpiraev/ci` (`configs: lefthook.yml`) |
+| Lefthook | required `lefthook.yml` / `lefthook.yaml` → `remotes` → `sargonpiraev/ci` (`configs: lefthook.yml`); `scripts.prepare` must run `lefthook install` (hooks on `npm ci` / `npm install`) |
 
 Meta-only gates (`meta__package`, meta lefthook, commitlint shape) stay in the private meta repo.
 
@@ -44,10 +44,24 @@ eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-er
   "tsconfig.json" "tsconfig.base.json" ".releaserc.json" \
   ".github/workflows/on-push-main.yml" \
   "playwright.harness.json" "apps/*/playwright.harness.json" \
-  "lefthook.yml" "lefthook.yaml"
+  "lefthook.yml" "lefthook.yaml" ".gitignore"
 ```
 
-### Opt-in harness files
+### Required / opt-in harness files
+
+```yaml
+# lefthook.yml (required)
+remotes:
+  - git_url: https://github.com/sargonpiraev/ci
+    ref: main
+    configs:
+      - lefthook.yml
+```
+
+```json
+// package.json (required) — hooks install via npm lifecycle
+{ "scripts": { "prepare": "lefthook install" } }
+```
 
 ```json
 // repo.harness.json (required)
@@ -87,7 +101,10 @@ export default [
 | flat-root Next (`next` dep, no `apps/`) | must be turbo monorepo with `apps/webapp` |
 | env apps without `env.harness.json` / `.env.example` keys | names-only harness + example file |
 | `pulumi/` without yaml/entry/scripts | add `Pulumi.yaml`, TS entry, `pulumi:preview`/`pulumi:up` |
+| `pulumi/` without gitignore for `.env` / `.pulumi` | ignore secrets/state only (not the whole `pulumi/` tree) |
 | `NPM_TOKEN` in workflow | use Trusted Publishing OIDC + `id-token: write` |
+| missing `lefthook.yml` / `lefthook.yaml` | add remotes → `sargonpiraev/ci` + `"prepare": "lefthook install"` |
+| `scripts.prepare` missing / not `lefthook install` | add `"prepare": "lefthook install"` (+ `lefthook` devDependency) |
 | lefthook without `remotes` → `sargonpiraev/ci` | pull shared `lefthook.yml` via remotes (no local hook duplication) |
 
 ## Schemas (IDE `$schema`)

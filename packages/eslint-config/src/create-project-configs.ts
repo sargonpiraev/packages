@@ -86,6 +86,11 @@ export function createProjectConfigs(
   const releasercFiles = expand(scope, ['.releaserc.json'])
   const lefthookFiles = expandRoot(scope, ['lefthook.yml', 'lefthook.yaml'])
   const packageJsonFiles = expandRoot(scope, ['package.json'])
+  // Meta: sibling projects + meta root (meta has pulumi/ too)
+  const gitignoreFiles =
+    scope === 'project'
+      ? ['.gitignore']
+      : ['*/.gitignore', '.gitignore']
 
   return [
     ...eslintPluginJsonSchemaValidator.configs.base,
@@ -201,6 +206,16 @@ export function createProjectConfigs(
           schema: schemas.projectLefthook,
         },
       ]),
+    },
+    {
+      files: gitignoreFiles,
+      plugins: {
+        'project-harness': projectHarnessPlugin,
+      },
+      processor: 'project-harness/gitignore',
+      rules: {
+        'project-harness/pulumi-gitignore': 'error',
+      },
     },
   ]
 }

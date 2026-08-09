@@ -3,6 +3,9 @@ import { describe, it } from 'node:test'
 import {
   CANONICAL_APP_NAMES,
   createProjectConfigs,
+  patternCoversPulumiEnv,
+  patternCoversPulumiState,
+  patternIgnoresWholePulumiTree,
   schemas,
 } from '../index.js'
 
@@ -33,6 +36,15 @@ describe('createProjectConfigs', () => {
     )
     assert.ok(lefthook)
     assert.ok(lefthook.files?.includes('lefthook.yaml'))
+
+    const gitignore = configs.find(
+      (c) => Array.isArray(c.files) && c.files.includes('.gitignore'),
+    )
+    assert.ok(gitignore)
+    assert.equal(
+      gitignore.rules?.['project-harness/pulumi-gitignore'],
+      'error',
+    )
   })
 
   it('prefixes sibling root globs for meta scope (not deep package.json)', () => {
@@ -52,6 +64,27 @@ describe('createProjectConfigs', () => {
       (c) => Array.isArray(c.files) && c.files.includes('*/lefthook.yml'),
     )
     assert.ok(lefthook)
+
+    const gitignore = configs.find(
+      (c) =>
+        Array.isArray(c.files) &&
+        c.files.includes('*/.gitignore') &&
+        c.files.includes('.gitignore'),
+    )
+    assert.ok(gitignore)
+  })
+
+  it('accepts reasonable pulumi gitignore pattern equivalents', () => {
+    assert.equal(patternCoversPulumiEnv('.env'), true)
+    assert.equal(patternCoversPulumiEnv('**/.env'), true)
+    assert.equal(patternCoversPulumiEnv('pulumi/.env'), true)
+    assert.equal(patternCoversPulumiEnv('.env*'), true)
+    assert.equal(patternCoversPulumiEnv('.env.local'), false)
+    assert.equal(patternCoversPulumiState('.pulumi/'), true)
+    assert.equal(patternCoversPulumiState('**/.pulumi/'), true)
+    assert.equal(patternCoversPulumiState('pulumi/.pulumi'), true)
+    assert.equal(patternIgnoresWholePulumiTree('pulumi/'), true)
+    assert.equal(patternIgnoresWholePulumiTree('pulumi/.env'), false)
   })
 
   it('exports project schemas and canonical apps', () => {
@@ -62,6 +95,18 @@ describe('createProjectConfigs', () => {
     assert.ok(schemas.projectReleaserc)
     assert.ok(schemas.projectLefthook)
     assert.deepEqual(schemas.projectLefthook.required, ['remotes'])
+    const packageScripts = (
+      schemas.projectPackage as {
+        properties: {
+          scripts: {
+            required: string[]
+            properties: { prepare: { pattern: string } }
+          }
+        }
+      }
+    ).properties.scripts
+    assert.ok(packageScripts.required.includes('prepare'))
+    assert.match(packageScripts.properties.prepare.pattern, /lefthook/)
     assert.deepEqual(
       schemas.appPlaywrightWebapp.required,
       expectArrayContaining(

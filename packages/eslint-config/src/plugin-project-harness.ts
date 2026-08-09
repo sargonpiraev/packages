@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { ESLint, Rule } from 'eslint'
+import type { ESLint, Linter, Rule } from 'eslint'
 import {
   CANONICAL_APP_NAMES,
   ENV_CONTRACT_APP_NAMES,
@@ -99,12 +99,106 @@ function envExampleHasKeys(filePath: string, keys: string[]): string[] {
   return keys.filter((k) => !present.has(k))
 }
 
+/** Active (non-negation) gitignore patterns from file text. */
+export function parseGitignorePatterns(text: string): string[] {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#') && !line.startsWith('!'))
+}
+
+function normalizeGitignorePattern(pattern: string): string {
+  return pattern.replace(/\/+$/, '')
+}
+
+/** True when pattern ignores pulumi/.env (root or nested .gitignore). */
+export function patternCoversPulumiEnv(pattern: string): boolean {
+  const p = normalizeGitignorePattern(pattern)
+  return (
+    p === '.env' ||
+    p === '**/.env' ||
+    p === 'pulumi/.env' ||
+    p === '**/pulumi/.env' ||
+    p === '.env*' ||
+    p === '**/.env*'
+  )
+}
+
+/** True when pattern ignores pulumi/.pulumi (local state). */
+export function patternCoversPulumiState(pattern: string): boolean {
+  const p = normalizeGitignorePattern(pattern)
+  return (
+    p === '.pulumi' ||
+    p === '**/.pulumi' ||
+    p === 'pulumi/.pulumi' ||
+    p === '**/pulumi/.pulumi' ||
+    p === '.pulumi/**' ||
+    p === '**/.pulumi/**' ||
+    p === 'pulumi/.pulumi/**' ||
+    p === '**/pulumi/.pulumi/**'
+  )
+}
+
+/** Root .gitignore must not ignore the whole pulumi/ IaC tree. */
+export function patternIgnoresWholePulumiTree(pattern: string): boolean {
+  const p = normalizeGitignorePattern(pattern)
+  return (
+    p === 'pulumi' ||
+    p === '/pulumi' ||
+    p === 'pulumi/**' ||
+    p === '/pulumi/**'
+  )
+}
+
+function readGitignorePatterns(filePath: string): string[] {
+  if (!fs.existsSync(filePath)) return []
+  return parseGitignorePatterns(fs.readFileSync(filePath, 'utf8'))
+}
+
+export type PulumiGitignoreStatus = {
+  hasPulumi: boolean
+  coversEnv: boolean
+  coversState: boolean
+  ignoresWholeTree: boolean
+}
+
+/**
+ * When pulumi/ exists, root .gitignore and/or pulumi/.gitignore must ignore
+ * secrets (.env) and local state (.pulumi) — not the whole pulumi/ source tree.
+ */
+export function getPulumiGitignoreStatus(root: string): PulumiGitignoreStatus {
+  const pulumiDir = path.join(root, 'pulumi')
+  const hasPulumi =
+    fs.existsSync(pulumiDir) && fs.statSync(pulumiDir).isDirectory()
+  if (!hasPulumi) {
+    return {
+      hasPulumi: false,
+      coversEnv: true,
+      coversState: true,
+      ignoresWholeTree: false,
+    }
+  }
+
+  const rootPatterns = readGitignorePatterns(path.join(root, '.gitignore'))
+  const nestedPatterns = readGitignorePatterns(
+    path.join(pulumiDir, '.gitignore'),
+  )
+  const combined = [...rootPatterns, ...nestedPatterns]
+
+  return {
+    hasPulumi: true,
+    coversEnv: combined.some(patternCoversPulumiEnv),
+    coversState: combined.some(patternCoversPulumiState),
+    ignoresWholeTree: rootPatterns.some(patternIgnoresWholePulumiTree),
+  }
+}
+
 const inventoryRule: Rule.RuleModule = {
   meta: {
     type: 'problem',
     docs: {
       description:
-        'Hard project harness: prettier, tsconfig, repo apps, env, pulumi, npm token hygiene',
+        'Hard project harness: prettier, tsconfig, lefthook, repo apps, env, pulumi, npm token hygiene',
     },
     schema: [],
     messages: {
@@ -113,6 +207,10 @@ const inventoryRule: Rule.RuleModule = {
       missingTsconfig: '{{reason}}',
       missingRepoHarness:
         'missing repo.harness.json (declare layout + canonical apps).',
+      missingLefthook:
+        'missing lefthook.yml (remotes → sargonpiraev/ci configs: [lefthook.yml]; hooks via scripts.prepare → lefthook install).',
+      missingLefthookPrepare:
+        'package.json scripts.prepare must run lefthook install (wires git hooks on npm ci / npm install).',
       invalidRepoHarness: 'repo.harness.json: {{reason}}',
       forbiddenApp: 'forbidden apps/* name "{{name}}" (use canonical allowlist).',
       unknownApp: 'apps/* "{{name}}" is not in the canonical allowlist.',
@@ -130,6 +228,12 @@ const inventoryRule: Rule.RuleModule = {
         'pulumi/ exists but TypeScript entry missing (index.ts or src/index.ts; or set pulumi.harness.json).',
       missingPulumiScripts:
         'pulumi/ exists but package.json scripts must include pulumi:preview and pulumi:up.',
+      missingPulumiGitignoreEnv:
+        'pulumi/ exists but .gitignore must ignore pulumi/.env (e.g. .env, **/.env, or pulumi/.env) — not the whole pulumi/ tree.',
+      missingPulumiGitignoreState:
+        'pulumi/ exists but .gitignore must ignore local state .pulumi/ (e.g. .pulumi/, **/.pulumi/, or pulumi/.pulumi/).',
+      pulumiGitignoreWholeTree:
+        'pulumi/ exists: do not gitignore the whole pulumi/ source tree — ignore secrets/state only (.env, .pulumi/).',
       npmrcToken:
         'committed .npmrc must not contain npm tokens / auth (use Trusted Publishing OIDC).',
     },
@@ -153,6 +257,18 @@ const inventoryRule: Rule.RuleModule = {
             messageId: 'missingPrettier',
             data: { pkg: PRETTIER_CONFIG_PACKAGE },
           })
+        }
+
+        if (
+          !fs.existsSync(path.join(root, 'lefthook.yml')) &&
+          !fs.existsSync(path.join(root, 'lefthook.yaml'))
+        ) {
+          context.report({ node, messageId: 'missingLefthook' })
+        }
+
+        const prepare = pkg.scripts?.prepare ?? ''
+        if (!/lefthook\s+install/.test(prepare)) {
+          context.report({ node, messageId: 'missingLefthookPrepare' })
         }
 
         const ts = hasTsconfigExtendsShared(root)
@@ -221,6 +337,16 @@ const inventoryRule: Rule.RuleModule = {
           const scripts = pkg.scripts ?? {}
           if (!scripts['pulumi:preview'] || !scripts['pulumi:up']) {
             context.report({ node, messageId: 'missingPulumiScripts' })
+          }
+          const gi = getPulumiGitignoreStatus(root)
+          if (gi.ignoresWholeTree) {
+            context.report({ node, messageId: 'pulumiGitignoreWholeTree' })
+          }
+          if (!gi.coversEnv) {
+            context.report({ node, messageId: 'missingPulumiGitignoreEnv' })
+          }
+          if (!gi.coversState) {
+            context.report({ node, messageId: 'missingPulumiGitignoreState' })
           }
         }
 
@@ -341,13 +467,71 @@ const workflowTokenRule: Rule.RuleModule = {
   },
 }
 
+const pulumiGitignoreRule: Rule.RuleModule = {
+  meta: {
+    type: 'problem',
+    docs: {
+      description:
+        'When pulumi/ exists, .gitignore must ignore .env + .pulumi state (not the whole pulumi/ tree)',
+    },
+    schema: [],
+    messages: {
+      missingPulumiGitignoreEnv:
+        'pulumi/ exists but .gitignore must ignore pulumi/.env (e.g. .env, **/.env, or pulumi/.env) — not the whole pulumi/ tree.',
+      missingPulumiGitignoreState:
+        'pulumi/ exists but .gitignore must ignore local state .pulumi/ (e.g. .pulumi/, **/.pulumi/, or pulumi/.pulumi/).',
+      pulumiGitignoreWholeTree:
+        'pulumi/ exists: do not gitignore the whole pulumi/ source tree — ignore secrets/state only (.env, .pulumi/).',
+    },
+  },
+  create(context) {
+    const diskPath =
+      context.physicalFilename ||
+      context.filename.replace(/\/\d+\.js$/, '')
+    const root = path.dirname(diskPath)
+    return {
+      Program(node) {
+        const gi = getPulumiGitignoreStatus(root)
+        if (!gi.hasPulumi) return
+        if (gi.ignoresWholeTree) {
+          context.report({ node, messageId: 'pulumiGitignoreWholeTree' })
+        }
+        if (!gi.coversEnv) {
+          context.report({ node, messageId: 'missingPulumiGitignoreEnv' })
+        }
+        if (!gi.coversState) {
+          context.report({ node, messageId: 'missingPulumiGitignoreState' })
+        }
+      },
+    }
+  },
+}
+
+/** Turn .gitignore into a tiny JS module so ESLint can attach rules. */
+const gitignoreProcessor: Linter.Processor = {
+  meta: {
+    name: 'gitignore',
+    version: '0.0.0',
+  },
+  preprocess() {
+    return ['\n']
+  },
+  postprocess(messages: Linter.LintMessage[][]) {
+    return messages[0] ?? []
+  },
+}
+
 export const projectHarnessPlugin: ESLint.Plugin = {
   meta: {
     name: '@sargonpiraev/eslint-config/project-harness',
     version: '0.0.0',
   },
+  processors: {
+    gitignore: gitignoreProcessor,
+  },
   rules: {
     inventory: inventoryRule,
     'workflow-no-npm-token': workflowTokenRule,
+    'pulumi-gitignore': pulumiGitignoreRule,
   },
 }

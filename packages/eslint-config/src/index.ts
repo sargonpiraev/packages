@@ -11,6 +11,13 @@ export {
   PRETTIER_CONFIG_PACKAGE,
   TSCONFIG_PACKAGE_PREFIX,
 } from './canonical-apps.js'
-export { projectHarnessPlugin } from './plugin-project-harness.js'
+export {
+  projectHarnessPlugin,
+  getPulumiGitignoreStatus,
+  parseGitignorePatterns,
+  patternCoversPulumiEnv,
+  patternCoversPulumiState,
+  patternIgnoresWholePulumiTree,
+} from './plugin-project-harness.js'
 export { default as project } from './project.js'
 export { default as projectMeta } from './project-meta.js'

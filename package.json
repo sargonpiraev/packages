@@ -12,7 +12,7 @@
     "release": "multi-semantic-release",
     "prepare": "lefthook install",
     "test:unit": "turbo run test",
-    "test:lint": "eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \"project.json\" \"package.json\" \".cursor/worktrees.json\" \"repo.harness.json\" \"env.harness.json\" \"pulumi.harness.json\" \"tsconfig.json\" \"tsconfig.base.json\" \".releaserc.json\" \".github/workflows/on-push-main.yml\" \"playwright.harness.json\" \"apps/*/playwright.harness.json\" && npm run lint",
+    "test:lint": "eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \"project.json\" \"package.json\" \".cursor/worktrees.json\" \"repo.harness.json\" \"env.harness.json\" \"pulumi.harness.json\" \"tsconfig.json\" \"tsconfig.base.json\" \".releaserc.json\" \".github/workflows/on-push-main.yml\" \"playwright.harness.json\" \"apps/*/playwright.harness.json\" \".gitignore\" && npm run lint",
     "test:check-types": "npm run check-types",
     "test:spec": "node -e \"console.log('noop test:spec \u2014 N/A'); process.exit(0)\"",
     "test:visual": "node -e \"console.log('noop test:visual \u2014 N/A'); process.exit(0)\"",
