@@ -237,6 +237,8 @@ const inventoryRule: Rule.RuleModule = {
         'pulumi/ exists: do not gitignore the whole pulumi/ source tree — ignore secrets/state only (.env, .pulumi/).',
       npmrcToken:
         'committed .npmrc must not contain npm tokens / auth (use Trusted Publishing OIDC).',
+      missingTestCwv:
+        'webapp/docapp (or flat-root playwright.config.ts) requires package.json scripts.test:cwv (Core Web Vitals lab lane; not part of test:spec).',
     },
   },
   create(context) {
@@ -272,6 +274,15 @@ const inventoryRule: Rule.RuleModule = {
           context.report({ node, messageId: 'missingLefthookPrepare' })
         }
 
+        const diskApps = listAppDirs(root)
+        const needsCwvScript =
+          diskApps.includes('webapp') ||
+          diskApps.includes('docapp') ||
+          fs.existsSync(path.join(root, 'playwright.config.ts'))
+        if (needsCwvScript && !pkg.scripts?.['test:cwv']) {
+          context.report({ node, messageId: 'missingTestCwv' })
+        }
+
         const ts = hasTsconfigExtendsShared(root)
         if (!ts.ok) {
           context.report({
@@ -293,7 +304,6 @@ const inventoryRule: Rule.RuleModule = {
           }
         }
 
-        const diskApps = listAppDirs(root)
         for (const name of diskApps) {
           if ((FORBIDDEN_APP_NAMES as readonly string[]).includes(name)) {
             context.report({

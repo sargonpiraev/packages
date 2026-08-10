@@ -164,12 +164,22 @@ describe('createProjectConfigs', () => {
       'seo',
       'analytics',
       'visual',
+      'cwv',
+    ])
+    assert.deepEqual(REQUIRED_PLAYWRIGHT_PROJECTS.docapp, [
+      'functional',
+      'seo',
+      'analytics',
+      'visual',
+      'cwv',
     ])
     assert.deepEqual(REQUIRED_PLAYWRIGHT_PROJECTS.extapp, [
       'functional',
       'visual',
     ])
     assert.equal(isAllowedProjectName('webapp', 'visual-mobile'), true)
+    assert.equal(isAllowedProjectName('webapp', 'cwv'), true)
+    assert.equal(isAllowedProjectName('extapp', 'cwv'), false)
     assert.equal(isAllowedProjectName('extapp', 'visual-mobile'), false)
     assert.equal(
       testMatchCoversSuite('**/*.functional.spec.ts', 'functional'),

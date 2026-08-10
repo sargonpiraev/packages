@@ -7,13 +7,13 @@ import { createJiti } from 'jiti'
 export type PlaywrightAppKind = 'webapp' | 'docapp' | 'extapp'
 
 export const REQUIRED_PLAYWRIGHT_PROJECTS = {
-  webapp: ['functional', 'seo', 'analytics', 'visual'],
-  docapp: ['functional', 'seo', 'analytics', 'visual'],
+  webapp: ['functional', 'seo', 'analytics', 'visual', 'cwv'],
+  docapp: ['functional', 'seo', 'analytics', 'visual', 'cwv'],
   extapp: ['functional', 'visual'],
 } as const satisfies Record<PlaywrightAppKind, readonly string[]>
 
 const WEB_SUITE_NAME =
-  /^(functional|seo|analytics|visual)(-[a-z0-9]+)?$/
+  /^(functional|seo|analytics|visual|cwv)(-[a-z0-9]+)?$/
 const EXT_SUITE_NAME = /^(functional|visual)$/
 
 const IGNORE_DIRS = new Set([

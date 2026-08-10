@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Project/shared package.json test scripts",
-  "description": "Required npm script names for project/shared package.json. Checks use the test:* namespace; build is separate. test:format must be prettier --check (not write-only / noop). prettier must reference @sargonpiraev/prettier-config. prepare must run lefthook install (hooks after npm ci/install). Optional Playwright lane scripts when the project has a webapp/docapp/extapp harness. Shipped by @sargonpiraev/eslint-config.",
+  "description": "Required npm script names for project/shared package.json. Checks use the test:* namespace; build is separate. test:format must be prettier --check (not write-only / noop). prettier must reference @sargonpiraev/prettier-config. prepare must run lefthook install (hooks after npm ci/install). Optional Playwright lane scripts (test:functional / test:seo / test:analytics / test:cwv) when the project has a webapp/docapp/extapp harness — inventory requires test:cwv when webapp/docapp (or flat-root playwright.config.ts) is present. Shipped by @sargonpiraev/eslint-config.",
   "type": "object",
   "required": ["scripts", "prettier"],
   "properties": {
@@ -38,6 +38,11 @@
         "test:seo": { "type": "string", "minLength": 1 },
         "test:analytics": { "type": "string", "minLength": 1 },
         "test:visual": { "type": "string", "minLength": 1 },
+        "test:cwv": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Core Web Vitals lab lane (Playwright project cwv). Required by inventory when webapp/docapp or flat-root playwright.config.ts exists. Not part of cheap test:spec."
+        },
         "test:format": {
           "type": "string",
           "minLength": 1,

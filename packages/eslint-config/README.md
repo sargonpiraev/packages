@@ -84,10 +84,12 @@ remotes:
 
 | App path | Required `projects[].name` | Specs on disk |
 |---|---|---|
-| `apps/webapp`, `apps/docapp`, or flat-root `playwright.config.ts` | `functional`, `seo`, `analytics`, `visual` (`*-mobile` OK) | at least one `*.<suite>.spec.ts` per required suite |
-| `apps/extapp` | `functional`, `visual` | same |
+| `apps/webapp`, `apps/docapp`, or flat-root `playwright.config.ts` | `functional`, `seo`, `analytics`, `visual`, `cwv` (`*-mobile` OK) | at least one `*.<suite>.spec.ts` per required suite |
+| `apps/extapp` | `functional`, `visual` | same (no `cwv`) |
 
 Also requires each required project's `testMatch` to cover `*.<suite>.spec.ts`. No separate `playwright.harness.json`.
+
+**Core Web Vitals (`cwv`):** lab metrics under Playwright (CDP CPU 4×) — not CrUX field p75. Assert LCP / INP / CLS budgets for Page Experience / ranking readiness. Run via `test:cwv` (slow; keep out of cheap `test:spec`). Inventory requires `scripts.test:cwv` when webapp/docapp (or flat-root PW) exists.
 
 ## Meta usage
 

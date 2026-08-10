@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Project/shared Nx project.json",
-  "description": "Required test targets for project/shared project.json. Checks use the test:* namespace; build is separate. Playwright lane targets test:functional / test:seo / test:analytics are optional (declare when the project has webapp/docapp/extapp narrow-integration harness). Orchestration targets such as git:status are optional (not a governance gate). Shipped by @sargonpiraev/eslint-config.",
+  "description": "Required test targets for project/shared project.json. Checks use the test:* namespace; build is separate. Playwright lane targets test:functional / test:seo / test:analytics / test:cwv are optional in schema (declare when the project has webapp/docapp/extapp narrow-integration harness; inventory requires test:cwv script when webapp/docapp or flat-root PW exists). Orchestration targets such as git:status are optional (not a governance gate). Shipped by @sargonpiraev/eslint-config.",
   "type": "object",
   "required": ["name", "tags", "targets"],
   "properties": {
@@ -39,6 +39,7 @@
         "test:seo": { "type": "object" },
         "test:analytics": { "type": "object" },
         "test:visual": { "type": "object" },
+        "test:cwv": { "type": "object" },
         "test:format": { "type": "object" },
         "build": { "type": "object" },
         "git:status": { "type": "object" }
