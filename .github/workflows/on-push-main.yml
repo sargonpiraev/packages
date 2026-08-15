@@ -1,48 +1,63 @@
 name: on-push-main
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_call:
+    inputs:
+      skip-audit:
+        type: boolean
+        default: false
+        description: Skip npm audit job
+      install-playwright:
+        type: boolean
+        default: false
+        description: Install Playwright Chromium before npm test
+    secrets:
+      POSTGRES_URL:
+        required: false
+        description: Optional Postgres URL for apps whose npm test runs Playwright against a live DB
 
 permissions:
   contents: read
 
 jobs:
-  base:
-    uses: sargonpiraev/ci/.github/workflows/on-push-main.yml@main
-    secrets: inherit
-    with:
-      # criticals currently come from semantic-release → nested npm/tar; revisit later
-      skip-audit: true
-
-  release:
-    needs: base
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  lint:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-      id-token: write
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          persist-credentials: true
-
-      # Do not pass registry-url to setup-node — it writes an .npmrc that breaks
-      # npm Trusted Publishing (OIDC). Auth is OIDC-only; no NPM_TOKEN.
       - uses: sargonpiraev/ci/.github/actions/setup-node-npm-ci@main
+      - run: npm run lint
 
-      - name: Verify OIDC + npm for trusted publishing
-        run: |
-          test -n "${ACTIONS_ID_TOKEN_REQUEST_URL}"
-          test -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}"
-          npm --version
+  check-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: sargonpiraev/ci/.github/actions/setup-node-npm-ci@main
+      - run: npm run check-types
 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: sargonpiraev/ci/.github/actions/setup-node-npm-ci@main
       - run: npm run build
 
-      - run: npm run release
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: sargonpiraev/ci/.github/actions/setup-node-npm-ci@main
+      - name: Install Playwright Chromium
+        if: ${{ inputs.install-playwright }}
+        run: npx playwright install --with-deps chromium
+      - name: Run tests
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+        run: npm run test
+
+  audit:
+    if: ${{ !inputs.skip-audit }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: sargonpiraev/ci/.github/actions/setup-node-npm-ci@main
+      - run: npm audit --audit-level=critical

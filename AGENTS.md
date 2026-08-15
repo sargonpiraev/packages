@@ -1,6 +1,6 @@
-# packages
+# shared
 
-Public npm package monorepo.
+Shared monorepo (former `packages` + `ci`).
 
 - **clients** — transport API clients (OpenAPI → TS when no official SDK)
 - **pulumi-*** — thin Pulumi providers over clients
@@ -8,6 +8,8 @@ Public npm package monorepo.
 - **eslint-config** — shared project ESLint flat-config + inventory/harness JSON schemas (`@sargonpiraev/eslint-config`)
 - **prettier-config** — shared Prettier (`@sargonpiraev/prettier-config`)
 - **tsconfig** — shared TypeScript base with `strict: true` (`@sargonpiraev/tsconfig`)
+- **ci/** — Lefthook remotes provider baseline (`ci/lefthook.yml`)
+- **.github/** — reusable GitHub Actions workflows + composite actions (from former `sargonpiraev/ci`)
 
 Root `repo.harness.json` + `"prettier": "@sargonpiraev/prettier-config"` + `tsconfig.base.json` extends `@sargonpiraev/tsconfig` are the pilot for hard project harness gates.
 
@@ -16,6 +18,6 @@ Projects and jobs depend on published npm versions, not `file:` into private met
 
 ## Publish
 
-- CI: [`.github/workflows/on-push-main.yml`](.github/workflows/on-push-main.yml) — baseline checks via `sargonpiraev/ci`, then `multi-semantic-release` on `main`
-- Auth: npm Trusted Publishing (OIDC) only — on npmjs.com → package → Settings → Trusted Publisher: GitHub Actions, repo `sargonpiraev/packages`, workflow `on-push-main.yml`
+- CI: [`.github/workflows/repo-on-push-main.yml`](.github/workflows/repo-on-push-main.yml) — baseline checks via local reusable [`.github/workflows/on-push-main.yml`](.github/workflows/on-push-main.yml), then `multi-semantic-release` on `main`
+- Auth: npm Trusted Publishing (OIDC) only — on npmjs.com → package → Settings → Trusted Publisher: GitHub Actions, repo (currently `sargonpiraev/packages` until rename to `shared`), workflow `repo-on-push-main.yml`
 - Opt-in: workspace packages with `.releaserc.json` (released via `multi-semantic-release`)

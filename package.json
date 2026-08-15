@@ -1,7 +1,7 @@
 {
-  "name": "packages",
+  "name": "shared",
   "private": true,
-  "description": "Public npm packages: API clients, Pulumi providers, MCP servers",
+  "description": "Shared monorepo: public npm packages + reusable GitHub Actions / Lefthook baseline",
   "scripts": {
     "build": "turbo run build",
     "lint": "turbo run lint",

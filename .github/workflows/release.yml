@@ -1,0 +1,51 @@
+name: release
+
+on:
+  workflow_call:
+    inputs:
+      package-manager:
+        type: string
+        default: npm
+        description: Package manager (reserved for future use)
+    outputs:
+      released:
+        description: Whether semantic-release published a new GitHub release
+        value: ${{ jobs.release.outputs.released }}
+      tag:
+        description: Git tag of the new release, empty when nothing was published
+        value: ${{ jobs.release.outputs.tag }}
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      released: ${{ steps.semantic-release.outputs.released }}
+      tag: ${{ steps.semantic-release.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - uses: sargonpiraev/ci/.github/actions/setup-node-npm-ci@main
+
+      - id: semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          BEFORE=$(git tag --sort=-creatordate | head -1 || true)
+          npx semantic-release
+          AFTER=$(git tag --sort=-creatordate | head -1 || true)
+          if [ -n "$AFTER" ] && [ "$AFTER" != "$BEFORE" ]; then
+            echo "released=1" >> "$GITHUB_OUTPUT"
+            echo "tag=$AFTER" >> "$GITHUB_OUTPUT"
+          else
+            echo "released=0" >> "$GITHUB_OUTPUT"
+            echo "tag=" >> "$GITHUB_OUTPUT"
+          fi

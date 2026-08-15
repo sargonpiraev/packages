@@ -1,18 +1,18 @@
-# packages
+# shared
 
-Public npm monorepo (Turborepo): API clients, Pulumi providers, MCP servers.
+Public shared monorepo (Turborepo): npm packages, reusable GitHub Actions, and Lefthook remotes baseline.
 
-Sibling checkout under the private meta workspace (`projects/packages`). Meta-only libraries live in meta `internal/`, not here.
+Sibling checkout under the private meta workspace (`projects/shared`). Merged from former `packages` + `ci` clones. Meta-only libraries live in meta `internal/`, not here.
 
 ## Layout
 
 ```text
-packages/
-  habitify-api-client/
-  hh-api-client/
-  *-mcp-server/     # MCP servers
-  pulumi-*          # Pulumi providers (GSC, Telegram, Expo, …)
-  <api>-client/     # transport clients (often OpenAPI-generated)
+shared/
+  packages/           # npm workspaces (@sargonpiraev/*)
+  ci/lefthook.yml     # Lefthook provider (other repos remotes: this file)
+  .github/workflows/  # Reusable GH Actions (must be repo-root .github/)
+  .github/actions/    # Composite actions
+  repo-on-push-main   # This repo’s consumer workflow + npm release
 ```
 
 ### Packages
@@ -34,8 +34,15 @@ packages/
 | `@sargonpiraev/pulumi-gsc` | Pulumi provider |
 | `@sargonpiraev/pulumi-telegram` | Pulumi provider |
 | `@sargonpiraev/pulumi-expo` | Pulumi provider |
+| `@sargonpiraev/eslint-config` | ESLint + project schemas |
+| `@sargonpiraev/prettier-config` | Prettier |
+| `@sargonpiraev/tsconfig` | TypeScript base |
 
 Publish is opt-in per package (`.releaserc.json` + `multi-semantic-release` on `main`). npm Trusted Publishing (OIDC) — no `NPM_TOKEN`.
+
+## CI / Lefthook
+
+See [`ci/README.md`](ci/README.md). Until GitHub rename `packages` → `shared` and archive of `ci`, external `uses:` / lefthook remotes may still point at `sargonpiraev/ci`.
 
 ## Develop
 

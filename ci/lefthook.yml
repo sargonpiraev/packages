@@ -1,0 +1,23 @@
+# Mirrors sargonpiraev/ci on-push-main baseline checks.
+# Consumers pull this via remotes — see .github/workflows/README.md
+
+commit-msg:
+  commands:
+    commitlint:
+      run: npx commitlint --edit {1}
+
+pre-push:
+  parallel: true
+  commands:
+    lint:
+      run: npm run lint
+    check-types:
+      run: npm run check-types
+    build:
+      run: npm run build
+    test:
+      run: npm run test
+    audit:
+      tags:
+        - audit
+      run: npm audit --audit-level=critical

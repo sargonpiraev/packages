@@ -1,0 +1,50 @@
+name: repo-on-push-main
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  base:
+    # Local reusable workflow (merged from former sargonpiraev/ci).
+    # External repos keep using sargonpiraev/ci until GitHub rename/archive.
+    uses: ./.github/workflows/on-push-main.yml
+    secrets: inherit
+    with:
+      # criticals currently come from semantic-release → nested npm/tar; revisit later
+      skip-audit: true
+
+  release:
+    needs: base
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      # Do not pass registry-url to setup-node — it writes an .npmrc that breaks
+      # npm Trusted Publishing (OIDC). Auth is OIDC-only; no NPM_TOKEN.
+      - uses: ./.github/actions/setup-node-npm-ci
+
+      - name: Verify OIDC + npm for trusted publishing
+        run: |
+          test -n "${ACTIONS_ID_TOKEN_REQUEST_URL}"
+          test -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}"
+          npm --version
+
+      - run: npm run build
+
+      - run: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
