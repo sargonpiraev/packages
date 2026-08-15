@@ -1,0 +1,49 @@
+# Product project root shape (lint root = this repo).
+# Meta sibling inventory stays in the meta-repo `.alint/projects.yml`.
+version: 1
+
+rules:
+  # Anchor on package.json (select "." is vacuous in alint); nested checks use root_only.
+  - id: project
+    kind: for_each_file
+    select:
+      - "package.json"
+    level: error
+    message: "Project root is missing required governance files"
+    require:
+      - kind: file_exists
+        paths: AGENTS.md
+        root_only: true
+      - kind: file_exists
+        paths: lefthook.yml
+        root_only: true
+      - kind: file_exists
+        paths: package.json
+        root_only: true
+      - kind: file_exists
+        paths: package-lock.json
+        root_only: true
+      - kind: file_exists
+        paths: project.json
+        root_only: true
+      - kind: file_exists
+        paths: .alint.yml
+        root_only: true
+
+  # Turborepo shape: when turbo.json is present → turbo.json + apps/ + packages/.
+  - id: turborepo
+    kind: for_each_file
+    select:
+      - "turbo.json"
+    level: error
+    message: "Turborepo root must have turbo.json, apps/, and packages/"
+    require:
+      - kind: file_exists
+        paths: turbo.json
+        root_only: true
+      - kind: dir_exists
+        paths: apps
+        root_only: true
+      - kind: dir_exists
+        paths: packages
+        root_only: true
