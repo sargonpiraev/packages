@@ -5,6 +5,7 @@ import {
   createProjectConfigs,
   inferPlaywrightAppKind,
   isAllowedProjectName,
+  patternCoversLefthookLocal,
   patternCoversPulumiEnv,
   patternCoversPulumiState,
   patternIgnoresWholePulumiTree,
@@ -110,6 +111,10 @@ describe('createProjectConfigs', () => {
     assert.equal(patternCoversPulumiState('pulumi/.pulumi'), true)
     assert.equal(patternIgnoresWholePulumiTree('pulumi/'), true)
     assert.equal(patternIgnoresWholePulumiTree('pulumi/.env'), false)
+    assert.equal(patternCoversLefthookLocal('lefthook-local.yml'), true)
+    assert.equal(patternCoversLefthookLocal('lefthook-local.yaml'), true)
+    assert.equal(patternCoversLefthookLocal('lefthook-local*'), true)
+    assert.equal(patternCoversLefthookLocal('lefthook.yml'), false)
   })
 
   it('exports project schemas and canonical apps', () => {

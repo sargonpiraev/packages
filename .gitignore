@@ -15,3 +15,7 @@ node_modules/
 test-results/
 playwright-report/
 .next/
+
+# Lefthook personal overrides (optional; never commit)
+lefthook-local.yml
+lefthook-local.yaml

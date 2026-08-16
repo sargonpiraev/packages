@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Project lefthook.yml",
-  "description": "Project lefthook must pull shared hooks from sargonpiraev/shared via remotes (configs: ci/lefthook.yml). Do not duplicate commit-msg / pre-push locally. See .cursor/rules/git__lefthook.mdc.",
+  "description": "Project lefthook must pull shared hooks from sargonpiraev/shared via remotes (configs: ci/lefthook.yml). Do not duplicate commit-msg / pre-push command bodies; pre-push.exclude_tags (e.g. audit) in this file is OK. Do not commit lefthook-local.yml (gitignore personal overrides). See .cursor/rules/git__lefthook.mdc.",
   "type": "object",
   "required": ["remotes"],
   "properties": {

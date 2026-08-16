@@ -9,6 +9,11 @@
 #   dirs:  apps/, packages/, .cursor/, .github/
 # Soft / elsewhere: .nvmrc (recommended), .env.example (ESLint env harness when
 # runtime env apps exist — see ws__project-governance).
+#
+# Lefthook: only committed config is lefthook.yml (remotes → ci/lefthook.yml).
+# lefthook-local.yml is Lefthook’s optional personal override — gitignore it;
+# do not commit it (inventory enforces the ignore). Not file_absent: local
+# overrides on disk are allowed.
 version: 1
 
 rules:

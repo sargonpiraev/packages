@@ -153,6 +153,18 @@ export function patternIgnoresWholePulumiTree(pattern: string): boolean {
   )
 }
 
+/** True when pattern ignores lefthook-local.yml / .yaml (personal Lefthook overrides). */
+export function patternCoversLefthookLocal(pattern: string): boolean {
+  const p = normalizeGitignorePattern(pattern)
+  return (
+    p === 'lefthook-local.yml' ||
+    p === 'lefthook-local.yaml' ||
+    p === 'lefthook-local*' ||
+    p === '/lefthook-local.yml' ||
+    p === '/lefthook-local.yaml'
+  )
+}
+
 function readGitignorePatterns(filePath: string): string[] {
   if (!fs.existsSync(filePath)) return []
   return parseGitignorePatterns(fs.readFileSync(filePath, 'utf8'))
@@ -226,6 +238,8 @@ const inventoryRule: Rule.RuleModule = {
         'missing lefthook.yml (remotes → sargonpiraev/shared configs: [ci/lefthook.yml]; hooks via scripts.prepare → lefthook install).',
       missingLefthookPrepare:
         'package.json scripts.prepare must run lefthook install (wires git hooks on npm ci / npm install).',
+      missingLefthookLocalGitignore:
+        '.gitignore must ignore lefthook-local.yml (Lefthook personal overrides; only lefthook.yml is committed).',
       invalidRepoHarness: 'repo.harness.json: {{reason}}',
       forbiddenApp: 'forbidden apps/* name "{{name}}" (use canonical allowlist).',
       unknownApp: 'apps/* "{{name}}" is not in the canonical allowlist.',
@@ -343,6 +357,13 @@ const inventoryRule: Rule.RuleModule = {
         const prepare = pkg.scripts?.prepare ?? ''
         if (!/lefthook\s+install/.test(prepare)) {
           context.report({ node, messageId: 'missingLefthookPrepare' })
+        }
+
+        const rootGitignorePatterns = readGitignorePatterns(
+          path.join(root, '.gitignore'),
+        )
+        if (!rootGitignorePatterns.some(patternCoversLefthookLocal)) {
+          context.report({ node, messageId: 'missingLefthookLocalGitignore' })
         }
 
         const diskApps = listAppDirs(root)

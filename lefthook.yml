@@ -6,5 +6,7 @@ remotes:
       - ci/lefthook.yml
 
 # Audit stays in CI on-push-main (parity with workflow skip-audit).
-exclude_tags:
-  - audit
+# exclude_tags must live under the hook — remotes merge keeps it; root-level does not.
+pre-push:
+  exclude_tags:
+    - audit

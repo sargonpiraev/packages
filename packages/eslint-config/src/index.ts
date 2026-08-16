@@ -17,6 +17,7 @@ export {
   projectHarnessPlugin,
   getPulumiGitignoreStatus,
   parseGitignorePatterns,
+  patternCoversLefthookLocal,
   patternCoversPulumiEnv,
   patternCoversPulumiState,
   patternIgnoresWholePulumiTree,
