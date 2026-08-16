@@ -12,14 +12,6 @@ import {
 } from './canonical-apps.js'
 import { playwrightConfigRule } from './playwright-config-rule.js'
 
-type RepoHarness = {
-  layout?: string
-  apps?: string[]
-}
-
-type EnvHarness = {
-  requiredKeys?: Record<string, string[]>
-}
 
 function projectRootFromFilename(filename: string): string {
   return path.dirname(filename)
@@ -88,19 +80,6 @@ function envExamplePath(root: string, appKey: string): string {
   return path.join(root, 'apps', appKey, '.env.example')
 }
 
-function envExampleHasKeys(filePath: string, keys: string[]): string[] {
-  if (!fs.existsSync(filePath)) return keys
-  const text = fs.readFileSync(filePath, 'utf8')
-  const present = new Set(
-    text
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line && !line.startsWith('#'))
-      .map((line) => line.split('=')[0]?.trim())
-      .filter(Boolean),
-  )
-  return keys.filter((k) => !present.has(k))
-}
 
 /** Active (non-negation) gitignore patterns from file text. */
 export function parseGitignorePatterns(text: string): string[] {
@@ -232,29 +211,22 @@ const inventoryRule: Rule.RuleModule = {
       missingEslintDep:
         'package.json must list "{{pkg}}" in dependencies or devDependencies.',
       missingTsconfig: '{{reason}}',
-      missingRepoHarness:
-        'missing repo.harness.json (declare layout + canonical apps).',
       missingLefthook:
         'missing lefthook.yml (remotes → sargonpiraev/shared configs: [ci/lefthook.yml]; hooks via scripts.prepare → lefthook install).',
       missingLefthookPrepare:
         'package.json scripts.prepare must run lefthook install (wires git hooks on npm ci / npm install).',
       missingLefthookLocalGitignore:
         '.gitignore must ignore lefthook-local.yml (Lefthook personal overrides; only lefthook.yml is committed).',
-      invalidRepoHarness: 'repo.harness.json: {{reason}}',
       forbiddenApp: 'forbidden apps/* name "{{name}}" (use canonical allowlist).',
       unknownApp: 'apps/* "{{name}}" is not in the canonical allowlist.',
-      appsMismatch:
-        'repo.harness.json apps {{harness}} must match apps/* on disk {{disk}}.',
-      missingTurbo: 'layout {{layout}} requires turbo.json at project root.',
+      missingTurbo: 'missing turbo.json at project root.',
       flatNextForbidden:
         'flat-root Next project app is forbidden; use turbo monorepo with apps/webapp (etc.).',
-      missingEnvHarness:
-        'apps {{apps}} require env.harness.json with requiredKeys (names-only).',
-      missingEnvExample: 'missing {{path}} for env.harness.json contract.',
-      missingEnvKeys: '{{path}} missing required keys: {{keys}}',
+      missingEnvExample:
+        'env-contract app "{{app}}" requires {{path}} (hand-maintained; no secrets).',
       missingPulumiYaml: 'pulumi/ exists but pulumi/Pulumi.yaml is missing.',
       missingPulumiEntry:
-        'pulumi/ exists but TypeScript entry missing (index.ts or src/index.ts; or set pulumi.harness.json).',
+        'pulumi/ exists but TypeScript entry missing (index.ts or src/index.ts).',
       missingPulumiScripts:
         'pulumi/ exists but package.json scripts must include pulumi:preview and pulumi:up.',
       missingPulumiGitignoreEnv:
@@ -423,16 +395,17 @@ const inventoryRule: Rule.RuleModule = {
           context.report({ node, messageId: 'flatNextForbidden' })
         }
 
+
+        if (!fs.existsSync(path.join(root, 'turbo.json'))) {
+          context.report({ node, messageId: 'missingTurbo' })
+        }
+
         const pulumiDir = path.join(root, 'pulumi')
         if (fs.existsSync(pulumiDir) && fs.statSync(pulumiDir).isDirectory()) {
           if (!fs.existsSync(path.join(pulumiDir, 'Pulumi.yaml'))) {
             context.report({ node, messageId: 'missingPulumiYaml' })
           }
-          const harness = readJsonFile<{ entry?: string }>(
-            path.join(root, 'pulumi.harness.json'),
-          )
-          const entry = harness?.entry ?? 'index.ts'
-          const entryPath = path.join(pulumiDir, entry)
+          const entryPath = path.join(pulumiDir, 'index.ts')
           const fallback = path.join(pulumiDir, 'src', 'index.ts')
           if (!fs.existsSync(entryPath) && !fs.existsSync(fallback)) {
             context.report({ node, messageId: 'missingPulumiEntry' })
@@ -453,79 +426,27 @@ const inventoryRule: Rule.RuleModule = {
           }
         }
 
-        const repoPath = path.join(root, 'repo.harness.json')
-        const repo = readJsonFile<RepoHarness>(repoPath)
-        if (!repo) {
-          context.report({ node, messageId: 'missingRepoHarness' })
-          return
-        }
-
-        const harnessApps = [...(repo.apps ?? [])].sort()
-        if (JSON.stringify(harnessApps) !== JSON.stringify(diskApps)) {
-          context.report({
-            node,
-            messageId: 'appsMismatch',
-            data: {
-              harness: JSON.stringify(harnessApps),
-              disk: JSON.stringify(diskApps),
-            },
-          })
-        }
-
-        if (
-          (repo.layout === 'turbo' || repo.layout === 'turbo-lib') &&
-          !fs.existsSync(path.join(root, 'turbo.json'))
-        ) {
-          context.report({
-            node,
-            messageId: 'missingTurbo',
-            data: { layout: repo.layout },
-          })
-        }
-
-        const envApps = harnessApps.filter((a) =>
-          (ENV_CONTRACT_APP_NAMES as readonly string[]).includes(a),
-        )
-        if (envApps.length > 0) {
-          const envPath = path.join(root, 'env.harness.json')
-          const env = readJsonFile<EnvHarness>(envPath)
-
-          // Names-only env.harness.json + .env.example (no env.ts SSOT).
-          if (!env?.requiredKeys) {
+        for (const app of diskApps) {
+          if (!(ENV_CONTRACT_APP_NAMES as readonly string[]).includes(app)) {
+            continue
+          }
+          const example = envExamplePath(root, app)
+          if (!fs.existsSync(example)) {
             context.report({
               node,
-              messageId: 'missingEnvHarness',
-              data: { apps: envApps.join(', ') },
+              messageId: 'missingEnvExample',
+              data: {
+                app,
+                path: path.relative(root, example),
+              },
             })
-          } else {
-            for (const [appKey, keys] of Object.entries(env.requiredKeys)) {
-              const example = envExamplePath(root, appKey)
-              if (!fs.existsSync(example)) {
-                context.report({
-                  node,
-                  messageId: 'missingEnvExample',
-                  data: { path: path.relative(root, example) },
-                })
-                continue
-              }
-              const missing = envExampleHasKeys(example, keys)
-              if (missing.length > 0) {
-                context.report({
-                  node,
-                  messageId: 'missingEnvKeys',
-                  data: {
-                    path: path.relative(root, example),
-                    keys: missing.join(', '),
-                  },
-                })
-              }
-            }
           }
         }
       },
     }
   },
 }
+
 
 const workflowTokenRule: Rule.RuleModule = {
   meta: {

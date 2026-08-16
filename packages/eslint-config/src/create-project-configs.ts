@@ -81,9 +81,6 @@ export function createProjectConfigs(
   const workflowFiles = expandRoot(scope, [
     '.github/workflows/on-push-main.yml',
   ])
-  const repoHarnessFiles = expandRoot(scope, ['repo.harness.json'])
-  const envHarnessFiles = expandRoot(scope, ['env.harness.json'])
-  const pulumiHarnessFiles = expandRoot(scope, ['pulumi.harness.json'])
   const tsconfigFiles = expandRoot(scope, [
     'tsconfig.json',
   ])
@@ -127,33 +124,6 @@ export function createProjectConfigs(
       rules: {
         'project-harness/inventory': 'error',
       },
-    },
-    {
-      files: repoHarnessFiles,
-      rules: schemaRule([
-        {
-          fileMatch: repoHarnessFiles,
-          schema: schemas.projectRepoHarness,
-        },
-      ]),
-    },
-    {
-      files: envHarnessFiles,
-      rules: schemaRule([
-        {
-          fileMatch: envHarnessFiles,
-          schema: schemas.projectEnvHarness,
-        },
-      ]),
-    },
-    {
-      files: pulumiHarnessFiles,
-      rules: schemaRule([
-        {
-          fileMatch: pulumiHarnessFiles,
-          schema: schemas.projectPulumiHarness,
-        },
-      ]),
     },
     {
       files: tsconfigFiles,

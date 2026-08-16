@@ -15,9 +15,9 @@ import {
 } from '../index.js'
 
 describe('createProjectConfigs', () => {
-  it('returns inventory + harness + workflow + repo gates for project scope', () => {
+  it('returns inventory + workflow + tsconfig gates for project scope', () => {
     const configs = createProjectConfigs({ scope: 'project' })
-    assert.ok(configs.length >= 8)
+    assert.ok(configs.length >= 5)
 
     const inventory = configs.find(
       (c) => Array.isArray(c.files) && c.files.includes('project.json'),
@@ -26,10 +26,13 @@ describe('createProjectConfigs', () => {
     assert.ok(inventory.files?.includes('package.json'))
     assert.ok(inventory.files?.includes('.cursor/worktrees.json'))
 
-    const repo = configs.find(
-      (c) => Array.isArray(c.files) && c.files.includes('repo.harness.json'),
+    assert.equal(
+      configs.some(
+        (c) =>
+          Array.isArray(c.files) && c.files.includes('repo.harness.json'),
+      ),
+      false,
     )
-    assert.ok(repo)
 
     const tsconfig = configs.find(
       (c) => Array.isArray(c.files) && c.files.includes('tsconfig.json'),
@@ -119,8 +122,9 @@ describe('createProjectConfigs', () => {
 
   it('exports project schemas and canonical apps', () => {
     assert.match(String(schemas.projectProject.title), /project\.json/i)
-    assert.ok(schemas.projectRepoHarness)
-    assert.ok(schemas.projectEnvHarness)
+    assert.ok(!('projectRepoHarness' in schemas))
+    assert.ok(!('projectEnvHarness' in schemas))
+    assert.ok(!('projectPulumiHarness' in schemas))
     assert.ok(schemas.projectTsconfig)
     assert.ok(schemas.projectReleaserc)
     assert.ok(schemas.projectLefthook)
