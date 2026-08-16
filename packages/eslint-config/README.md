@@ -13,7 +13,7 @@ Shared ESLint flat-config presets + JSON schemas for project inventory / harness
 | TypeScript | root `tsconfig.json` extends `@sargonpiraev/tsconfig` |
 | Env | `env.harness.json` names-only `requiredKeys` + hand-maintained `.env.example` |
 | Pulumi | if `pulumi/` exists: `Pulumi.yaml`, TS entry, `pulumi:preview` / `pulumi:up`, `.gitignore` ignores `.env` + `.pulumi` (not whole `pulumi/`) |
-| semantic-release | `.releaserc.json` shape when present |
+| semantic-release | `.releaserc.json` when present must `"extends": "@sargonpiraev/semantic-release-config"` |
 | Lefthook | required `lefthook.yml` / `lefthook.yaml` → `remotes` → `sargonpiraev/shared` (`configs: ci/lefthook.yml`); `scripts.prepare` must run `lefthook install` (hooks on `npm ci` / `npm install`) |
 
 Meta-only gates (`meta__package`, meta lefthook, commitlint shape) stay in the private meta repo.
@@ -41,7 +41,7 @@ Wire into `test:lint` (example):
 eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \
   "project.json" "package.json" ".cursor/worktrees.json" \
   "repo.harness.json" "env.harness.json" "pulumi.harness.json" \
-  "tsconfig.json" ".releaserc.json" \
+  "tsconfig.json" ".releaserc.json" "packages/*/.releaserc.json" \
   ".github/workflows/on-push-main.yml" \
   "playwright.config.ts" "apps/*/playwright.config.ts" \
   "lefthook.yml" "lefthook.yaml" ".gitignore"

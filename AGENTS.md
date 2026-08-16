@@ -9,6 +9,7 @@ Shared monorepo (former `packages` + `ci`).
 - **prettier-config** — shared Prettier (`@sargonpiraev/prettier-config`)
 - **commitlint-config** — shared Commitlint conventional preset (`@sargonpiraev/commitlint-config`)
 - **tsconfig** — shared TypeScript base with `strict: true` (`@sargonpiraev/tsconfig`)
+- **semantic-release-config** — shared semantic-release base (`@sargonpiraev/semantic-release-config`); package `.releaserc.json` thin-extends it
 - **ci/** — Lefthook remotes provider baseline (`ci/lefthook.yml`) + alint project rules (`ci/alint/`)
 - **.github/** — reusable GitHub Actions workflows + composite actions (from former `sargonpiraev/ci`)
 
@@ -21,4 +22,4 @@ Projects and jobs depend on published npm versions, not `file:` into private met
 
 - CI: [`.github/workflows/repo-on-push-main.yml`](.github/workflows/repo-on-push-main.yml) — baseline checks via local reusable [`.github/workflows/on-push-main.yml`](.github/workflows/on-push-main.yml), then `multi-semantic-release` on `main`
 - Auth: npm Trusted Publishing (OIDC) only — on npmjs.com → package → Settings → Trusted Publisher: GitHub Actions, repo (`sargonpiraev/shared`), workflow `repo-on-push-main.yml`
-- Opt-in: workspace packages with `.releaserc.json` (released via `multi-semantic-release`)
+- Opt-in: workspace packages with `.releaserc.json` that `"extends": "@sargonpiraev/semantic-release-config"` (released via `multi-semantic-release`)

@@ -87,8 +87,11 @@ export function createProjectConfigs(
   const tsconfigFiles = expandRoot(scope, [
     'tsconfig.json',
   ])
-  // Package-level .releaserc.json (e.g. packages/packages/*) + project root
-  const releasercFiles = expand(scope, ['.releaserc.json'])
+  // Package-level .releaserc.json (turbo packages/*) + project root
+  const releasercFiles =
+    scope === 'project'
+      ? ['.releaserc.json', 'packages/*/.releaserc.json']
+      : expand(scope, ['.releaserc.json'])
   const lefthookFiles = expandRoot(scope, ['lefthook.yml', 'lefthook.yaml'])
   const packageJsonFiles = expandRoot(scope, ['package.json'])
   // Meta: sibling projects + meta root (meta has pulumi/ too)

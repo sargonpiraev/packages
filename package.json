@@ -1,30 +1,36 @@
 {
+  "$schema": "../schema/project__package.json",
   "name": "shared",
   "private": true,
   "description": "Shared monorepo: public npm packages + reusable GitHub Actions / Lefthook baseline",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build": "turbo run build",
-    "lint": "turbo run lint",
     "check-types": "turbo run check-types",
-    "test": "turbo run test",
-    "generate": "turbo run generate",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
-    "release": "multi-semantic-release",
+    "generate": "turbo run generate",
+    "lint": "turbo run lint",
     "prepare": "lefthook install",
-    "test:unit": "turbo run test",
-    "test:lint": "eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \"project.json\" \"package.json\" \".cursor/worktrees.json\" \"repo.harness.json\" \"env.harness.json\" \"pulumi.harness.json\" \"tsconfig.json\" \".releaserc.json\" \".github/workflows/on-push-main.yml\" \"playwright.config.ts\" \"apps/*/playwright.config.ts\" \".gitignore\" && npm run lint",
+    "release": "multi-semantic-release",
+    "test": "turbo run test",
+    "test:alint": "alint check",
     "test:check-types": "npm run check-types",
-    "test:spec": "node -e \"console.log('noop test:spec — N/A'); process.exit(0)\"",
-    "test:visual": "node -e \"console.log('noop test:visual — N/A'); process.exit(0)\"",
     "test:format": "prettier --check \"**/*.{ts,tsx,md,json}\"",
-    "test:alint": "alint check"
+    "test:lint": "eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \"project.json\" \"package.json\" \".cursor/worktrees.json\" \"repo.harness.json\" \"env.harness.json\" \"pulumi.harness.json\" \"tsconfig.json\" \".releaserc.json\" \"packages/*/.releaserc.json\" \".github/workflows/on-push-main.yml\" \"playwright.config.ts\" \"apps/*/playwright.config.ts\" \".gitignore\" && npm run lint",
+    "test:spec": "node -e \"console.log('noop test:spec — N/A'); process.exit(0)\"",
+    "test:unit": "turbo run test",
+    "test:visual": "node -e \"console.log('noop test:visual — N/A'); process.exit(0)\""
   },
   "devDependencies": {
     "@asamarts/alint": "^0.14.2",
     "@commitlint/cli": "^21.2.1",
     "@eslint/js": "^9.26.0",
+    "@sargonpiraev/commitlint-config": "file:packages/commitlint-config",
     "@sargonpiraev/eslint-config": "file:packages/eslint-config",
     "@sargonpiraev/prettier-config": "file:packages/prettier-config",
+    "@sargonpiraev/semantic-release-config": "file:packages/semantic-release-config",
     "@sargonpiraev/tsconfig": "file:packages/tsconfig",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/github": "^12.0.2",
@@ -43,17 +49,12 @@
     "ts-jest": "^29.3.2",
     "turbo": "^2.10.3",
     "typescript": "5.9.2",
-    "typescript-eslint": "^8.31.1",
-    "@sargonpiraev/commitlint-config": "file:packages/commitlint-config"
+    "typescript-eslint": "^8.31.1"
   },
+  "packageManager": "npm@10.9.4",
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "npm@10.9.4",
-  "workspaces": [
-    "packages/*"
-  ],
-  "$schema": "../schema/project__package.json",
   "allowScripts": {
     "@asamarts/alint@0.14.2": true
   }
