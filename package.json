@@ -9,7 +9,7 @@
     "test": "turbo run test",
     "generate": "turbo run generate",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
-    "release": "multi-semantic-release",
+    "release": "multi-semantic-release --ignore-packages=packages/commitlint-config/**,packages/confluence-mcp-server/**,packages/github-mcp-server/**,packages/gitlab-mcp-server/**,packages/google-calendar-mcp-server/**,packages/google-tasks-mcp-server/**,packages/habitify-api-client/**,packages/habitify-mcp-server/**,packages/hh-api-client/**,packages/hh-mcp-server/**,packages/jira-mcp-server/**,packages/notion-mcp-server/**,packages/pulumi-expo/**,packages/pulumi-gsc/**,packages/pulumi-telegram/**,packages/slack-mcp-server/**,packages/tsconfig/**",
     "prepare": "lefthook install",
     "test:unit": "turbo run test",
     "test:lint": "eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \"project.json\" \"package.json\" \".cursor/worktrees.json\" \"repo.harness.json\" \"env.harness.json\" \"pulumi.harness.json\" \"tsconfig.json\" \".releaserc.json\" \".github/workflows/on-push-main.yml\" \"playwright.config.ts\" \"apps/*/playwright.config.ts\" \".gitignore\" && npm run lint",
