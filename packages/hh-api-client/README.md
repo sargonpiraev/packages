@@ -1,10 +1,10 @@
 # HeadHunter API Client
 
-> Home: [`sargonpiraev/packages`](https://github.com/sargonpiraev/packages) → `packages/hh-api-client`
+> Home: [`sargonpiraev/shared`](https://github.com/sargonpiraev/shared) → `packages/hh-api-client`
 
 ![npm version](https://img.shields.io/npm/v/@sargonpiraev/hh-api-client)
 ![npm downloads](https://img.shields.io/npm/dw/@sargonpiraev/hh-api-client)
-![license](https://img.shields.io/github/license/sargonpiraev/packages)
+![license](https://img.shields.io/github/license/sargonpiraev/shared)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)
 
 A TypeScript client for the HeadHunter API, generated from the official OpenAPI specification.
@@ -297,6 +297,6 @@ Your support helps me continue developing and maintaining these tools, and motiv
 
 ## Release
 
-Published from the [`sargonpiraev/packages`](https://github.com/sargonpiraev/packages) monorepo via Trusted Publishing (`on-push-main.yml`).
+Published from the [`sargonpiraev/shared`](https://github.com/sargonpiraev/shared) monorepo via Trusted Publishing (`on-push-main.yml`).
 
 Release lane: Trusted Publisher on `on-push-main.yml`.

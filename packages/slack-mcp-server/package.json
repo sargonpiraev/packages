@@ -27,12 +27,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sargonpiraev/packages.git",
+    "url": "git+https://github.com/sargonpiraev/shared.git",
     "directory": "packages/slack-mcp-server"
   },
-  "homepage": "https://github.com/sargonpiraev/packages/tree/main/packages/slack-mcp-server#readme",
+  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/slack-mcp-server#readme",
   "bugs": {
-    "url": "https://github.com/sargonpiraev/packages/issues"
+    "url": "https://github.com/sargonpiraev/shared/issues"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -20,5 +20,5 @@ Projects and jobs depend on published npm versions, not `file:` into private met
 ## Publish
 
 - CI: [`.github/workflows/repo-on-push-main.yml`](.github/workflows/repo-on-push-main.yml) — baseline checks via local reusable [`.github/workflows/on-push-main.yml`](.github/workflows/on-push-main.yml), then `multi-semantic-release` on `main`
-- Auth: npm Trusted Publishing (OIDC) only — on npmjs.com → package → Settings → Trusted Publisher: GitHub Actions, repo (currently `sargonpiraev/packages` until rename to `shared`), workflow `repo-on-push-main.yml`
+- Auth: npm Trusted Publishing (OIDC) only — on npmjs.com → package → Settings → Trusted Publisher: GitHub Actions, repo (`sargonpiraev/shared`), workflow `repo-on-push-main.yml`
 - Opt-in: workspace packages with `.releaserc.json` (released via `multi-semantic-release`)

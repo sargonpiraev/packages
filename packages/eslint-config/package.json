@@ -40,12 +40,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sargonpiraev/packages.git",
+    "url": "git+https://github.com/sargonpiraev/shared.git",
     "directory": "packages/eslint-config"
   },
-  "homepage": "https://github.com/sargonpiraev/packages/tree/main/packages/eslint-config#readme",
+  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/eslint-config#readme",
   "bugs": {
-    "url": "https://github.com/sargonpiraev/packages/issues"
+    "url": "https://github.com/sargonpiraev/shared/issues"
   },
   "engines": {
     "node": ">=18.0.0"

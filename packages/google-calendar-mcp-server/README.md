@@ -12,7 +12,7 @@ npm install -g @sargonpiraev/google-calendar-mcp-server
 
 This package lives in the public monorepo:
 
-https://github.com/sargonpiraev/packages/tree/main/packages/google-calendar-mcp-server
+https://github.com/sargonpiraev/shared/tree/main/packages/google-calendar-mcp-server
 
 ## Run
 
@@ -24,4 +24,4 @@ Configure API credentials via environment variables (see `.env.example` when pro
 
 ## Release
 
-Published from the [`sargonpiraev/packages`](https://github.com/sargonpiraev/packages) monorepo via Trusted Publishing (`on-push-main.yml`).
+Published from the [`sargonpiraev/shared`](https://github.com/sargonpiraev/shared) monorepo via Trusted Publishing (`on-push-main.yml`).
