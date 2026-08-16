@@ -5,6 +5,7 @@ Reusable GitHub Actions and the Lefthook remotes provider live in this monorepo 
 | Path | Role |
 |---|---|
 | [`lefthook.yml`](./lefthook.yml) | Provider hooks baseline — other repos pull via lefthook `remotes:` |
+| [`npmrc`](./npmrc) | Portfolio root `.npmrc` template (`engine-strict=true`, `fund=false`) — copy to each repo root |
 | [`alint/project.yml`](./alint/project.yml) | Product-root alint FS gates — extend via local path or HTTPS+SRI |
 | [`../.github/workflows/`](../.github/workflows/) | Reusable workflows (`on-push-main.yml`, …) — must stay at repo-root `.github/` for GitHub Actions |
 | [`../.github/actions/`](../.github/actions/) | Composite actions (e.g. `setup-node-npm-ci`) |

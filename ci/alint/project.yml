@@ -3,10 +3,11 @@
 # Meta sibling inventory stays in the meta-repo `.alint.yml`.
 #
 # MUST presence (every Nx project / shared clone):
-#   files: .alint.yml, .nvmrc, package.json, package-lock.json, lefthook.yml,
+#   files: .alint.yml, .nvmrc, .npmrc, package.json, package-lock.json, lefthook.yml,
 #          project.json, AGENTS.md, commitlint.config.cjs, eslint.config.*,
 #          prettier.config.mjs, tsconfig.json
 #   dirs:  apps/, packages/, .cursor/, .github/
+# .npmrc = copy of ci/npmrc (engine-strict + fund=false); no auth tokens.
 # .nvmrc = presence (major pin). engines.node = ESLint content (floor >=22).
 # .env.example stays on the ESLint env harness when runtime env apps exist.
 #
@@ -50,6 +51,9 @@ rules:
         root_only: true
       - kind: file_exists
         paths: .nvmrc
+        root_only: true
+      - kind: file_exists
+        paths: .npmrc
         root_only: true
       - kind: file_exists
         paths: commitlint.config.cjs
