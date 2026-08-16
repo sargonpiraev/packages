@@ -107,6 +107,7 @@ export default [
 | missing `lefthook.yml` / `lefthook.yaml` | add remotes → `sargonpiraev/shared` + `"prepare": "lefthook install"` |
 | `scripts.prepare` missing / not `lefthook install` | add `"prepare": "lefthook install"` (+ `lefthook` devDependency) |
 | lefthook without `remotes` → `sargonpiraev/shared` | pull shared `ci/lefthook.yml` via remotes (no local hook duplication) |
+| missing `engines.node` / floor below `>=22` | set `"engines": { "node": ">=22" }` (stricter OK); pair with root `.nvmrc` |
 | playwright config missing required projects / specs | add named projects + `*.<suite>.spec.ts` files |
 
 ## Schemas (IDE `$schema`)

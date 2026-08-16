@@ -1,3 +1,4 @@
 {
-  "extends": "@sargonpiraev/semantic-release-config"
+  "extends": "@sargonpiraev/semantic-release-config",
+  "$schema": "./build/schemas/project__releaserc.json"
 }

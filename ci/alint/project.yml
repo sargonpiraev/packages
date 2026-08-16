@@ -3,12 +3,17 @@
 # Meta sibling inventory stays in the meta-repo `.alint.yml`.
 #
 # MUST presence (every Nx project / shared clone):
-#   files: .alint.yml, package.json, package-lock.json, lefthook.yml,
+#   files: .alint.yml, .nvmrc, package.json, package-lock.json, lefthook.yml,
 #          project.json, AGENTS.md, commitlint.config.cjs, eslint.config.*,
 #          prettier.config.mjs, tsconfig.json
 #   dirs:  apps/, packages/, .cursor/, .github/
-# Soft / elsewhere: .nvmrc (recommended), .env.example (ESLint env harness when
-# runtime env apps exist — see ws__project-governance).
+# .nvmrc = presence (major pin). engines.node = ESLint content (floor >=22).
+# .env.example stays on the ESLint env harness when runtime env apps exist.
+#
+# Presence vs content: alint only file_exists / dir_exists here. Do NOT put
+# package.json scripts shape, lefthook remotes structure, or other JSON/YAML
+# *contents* in alint — those belong in ESLint json-schema (project__package,
+# project__lefthook, …).
 #
 # Lefthook: only committed config is lefthook.yml (remotes → ci/lefthook.yml).
 # lefthook-local.yml is Lefthook’s optional personal override — gitignore it;
@@ -42,6 +47,9 @@ rules:
         root_only: true
       - kind: file_exists
         paths: .alint.yml
+        root_only: true
+      - kind: file_exists
+        paths: .nvmrc
         root_only: true
       - kind: file_exists
         paths: commitlint.config.cjs

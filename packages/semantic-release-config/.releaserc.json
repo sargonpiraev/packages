@@ -1,3 +1,4 @@
 {
-  "extends": "./index.js"
+  "extends": "./index.js",
+  "$schema": "../../node_modules/@sargonpiraev/eslint-config/build/schemas/project__releaserc.json"
 }

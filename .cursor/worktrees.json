@@ -1,5 +1,5 @@
 {
-  "$schema": "../../schema/project__worktrees.json",
+  "$schema": "../node_modules/@sargonpiraev/eslint-config/build/schemas/project__worktrees.json",
   "setup-worktree-unix": [
     "npm ci",
     "npx lefthook install"

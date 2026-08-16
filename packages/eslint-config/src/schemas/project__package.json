@@ -3,8 +3,21 @@
   "title": "Project/shared package.json test scripts",
   "description": "Required npm script names for project/shared package.json. Checks use the test:* namespace; build is separate. test:format must be prettier --check (not write-only / noop). Shared Prettier is via root prettier.config.mjs (not package.json prettier key) — inventory enforces the file + @sargonpiraev/prettier-config dep. prepare must run lefthook install (hooks after npm ci/install). Optional Playwright lane scripts (test:functional / test:seo / test:analytics / test:cwv) when the project has a webapp/docapp/extapp harness — inventory requires test:cwv when webapp/docapp (or flat-root playwright.config.ts) is present. Shipped by @sargonpiraev/eslint-config.",
   "type": "object",
-  "required": ["scripts"],
+  "required": ["scripts", "engines"],
   "properties": {
+    "engines": {
+      "type": "object",
+      "required": ["node"],
+      "properties": {
+        "node": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^>=(2[2-9]|[3-9][0-9])(\\.[0-9]+)*(\\s|<|$)",
+          "description": "Portfolio soft Node floor: >=22 (align with root .nvmrc major). Stricter ranges (e.g. >=24 <25) OK."
+        }
+      },
+      "additionalProperties": true
+    },
     "scripts": {
       "type": "object",
       "required": [

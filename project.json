@@ -1,6 +1,6 @@
 {
   "name": "shared",
-  "$schema": "../schema/project__project.json",
+  "$schema": "./node_modules/@sargonpiraev/eslint-config/build/schemas/project__project.json",
   "projectType": "library",
   "tags": [
     "shared",
