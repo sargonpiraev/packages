@@ -1,4 +1,5 @@
 # Product project root shape (lint root = this repo).
+# Canonical provider entry is ../.alint.yml (extends this file).
 # Meta sibling inventory stays in the meta-repo `.alint/projects.yml`.
 version: 1
 

@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=https://alint.org/_alint/configuration/schema.json
+# Canonical product-project alint provider (like ci/lefthook.yml).
+# Products extend this file locally; domain rules live under ci/alint/.
+version: 1
+
+extends:
+  - ./alint/project.yml
