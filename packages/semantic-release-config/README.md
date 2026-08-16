@@ -26,7 +26,7 @@ Install where you run `semantic-release` / `multi-semantic-release`:
 }
 ```
 
-This package’s own `.releaserc.json` extends `./index.js` (chicken-egg safe before first publish).
+This package’s own `.releaserc.json` also extends `@sargonpiraev/semantic-release-config` (workspace/npm package name — same as consumers).
 
 Trusted Publisher workflow filename for this monorepo: `repo-on-push-main.yml`.
 
