@@ -42,7 +42,7 @@ Publish is opt-in per package (`.releaserc.json` + `multi-semantic-release` on `
 
 ## CI / Lefthook
 
-See [`ci/README.md`](ci/README.md). Until GitHub rename `packages` → `shared` and archive of `ci`, external `uses:` / lefthook remotes may still point at `sargonpiraev/ci`.
+See [`ci/README.md`](ci/README.md). Consumers use `uses: sargonpiraev/shared/…` and lefthook remotes → `https://github.com/sargonpiraev/shared` + `configs: [ci/lefthook.yml]`.
 
 ## Develop
 

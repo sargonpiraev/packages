@@ -1,6 +1,14 @@
 # Product project root shape (lint root = this repo).
 # Canonical provider entry is ../.alint.yml (extends this file).
-# Meta sibling inventory stays in the meta-repo `.alint/projects.yml`.
+# Meta sibling inventory stays in the meta-repo `.alint.yml`.
+#
+# MUST presence (every Nx project / shared clone):
+#   files: .alint.yml, package.json, package-lock.json, lefthook.yml,
+#          project.json, AGENTS.md, commitlint.config.cjs, eslint.config.*,
+#          prettier.config.mjs, tsconfig.json
+#   dirs:  apps/, packages/, .cursor/, .github/
+# Soft / elsewhere: .nvmrc (recommended), .env.example (ESLint env harness when
+# runtime env apps exist — see ws__project-governance).
 version: 1
 
 rules:
@@ -10,7 +18,7 @@ rules:
     select:
       - "package.json"
     level: error
-    message: "Project root is missing required governance files"
+    message: "Project root is missing required governance files or dirs"
     require:
       - kind: file_exists
         paths: AGENTS.md
@@ -30,8 +38,33 @@ rules:
       - kind: file_exists
         paths: .alint.yml
         root_only: true
+      - kind: file_exists
+        paths: commitlint.config.cjs
+        root_only: true
+      - kind: file_exists
+        paths: eslint.config.mjs
+        root_only: true
+      - kind: file_exists
+        paths: prettier.config.mjs
+        root_only: true
+      - kind: file_exists
+        paths: tsconfig.json
+        root_only: true
+      - kind: dir_exists
+        paths: apps
+        root_only: true
+      - kind: dir_exists
+        paths: packages
+        root_only: true
+      - kind: dir_exists
+        paths: .cursor
+        root_only: true
+      - kind: dir_exists
+        paths: .github
+        root_only: true
 
-  # Turborepo shape: when turbo.json is present → turbo.json + apps/ + packages/.
+  # Turborepo shape: when turbo.json is present → turbo.json + apps/ + packages/
+  # (same dirs as project MUST; keeps an explicit turbo-oriented failure message).
   - id: turborepo
     kind: for_each_file
     select:

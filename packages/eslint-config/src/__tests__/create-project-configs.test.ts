@@ -31,7 +31,7 @@ describe('createProjectConfigs', () => {
     assert.ok(repo)
 
     const tsconfig = configs.find(
-      (c) => Array.isArray(c.files) && c.files.includes('tsconfig.base.json'),
+      (c) => Array.isArray(c.files) && c.files.includes('tsconfig.json'),
     )
     assert.ok(tsconfig)
 

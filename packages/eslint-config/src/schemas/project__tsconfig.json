@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Product root tsconfig",
-  "description": "Root tsconfig.json or tsconfig.base.json must extend @sargonpiraev/tsconfig (strict: true in the shared base). If compilerOptions.strict is set locally it must be true. Shipped by @sargonpiraev/eslint-config.",
+  "description": "Root tsconfig.json must extend @sargonpiraev/tsconfig (strict: true in the shared base). If compilerOptions.strict is set locally it must be true. Shipped by @sargonpiraev/eslint-config.",
   "type": "object",
   "required": ["extends"],
   "properties": {

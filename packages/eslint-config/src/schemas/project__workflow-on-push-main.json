@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Product on-push-main GitHub Actions workflow",
-  "description": "Canonical .github/workflows/on-push-main.yml must call the shared reusable workflow sargonpiraev/ci/.github/workflows/on-push-main.yml@*. Job id is conventionally ci, or base when other jobs need the reusable run. Must not wire NPM_TOKEN / NODE_AUTH_TOKEN (Trusted Publishing / OIDC). Failures: missing shared uses; NPM_TOKEN in env/secrets (text rule); publish job without id-token: write when releasing to npm. Shipped by @sargonpiraev/eslint-config.",
+  "description": "Canonical .github/workflows/on-push-main.yml must call the shared reusable workflow sargonpiraev/shared/.github/workflows/on-push-main.yml@*. Job id is conventionally ci, or base when other jobs need the reusable run. Must not wire NPM_TOKEN / NODE_AUTH_TOKEN (Trusted Publishing / OIDC). Failures: missing shared uses; NPM_TOKEN in env/secrets (text rule); publish job without id-token: write when releasing to npm. Shipped by @sargonpiraev/eslint-config.",
   "type": "object",
   "required": ["on", "jobs"],
   "properties": {
@@ -51,8 +51,8 @@
       "properties": {
         "uses": {
           "type": "string",
-          "pattern": "^sargonpiraev/ci/\\.github/workflows/on-push-main\\.yml@.+$",
-          "description": "Reusable workflow from sargonpiraev/ci (any ref after @)."
+          "pattern": "^sargonpiraev/shared/\\.github/workflows/on-push-main\\.yml@.+$",
+          "description": "Reusable workflow from sargonpiraev/shared (any ref after @)."
         }
       },
       "additionalProperties": true

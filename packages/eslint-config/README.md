@@ -4,17 +4,17 @@ Shared ESLint flat-config presets + JSON schemas for project inventory / harness
 
 | Gate | Files |
 |---|---|
-| Nx / scripts | `project.json`, `package.json` (`test:*`, `build`, `prettier`, `test:format` = `prettier --check`, `prepare` = `lefthook install`) |
+| Nx / scripts | `project.json`, `package.json` (`test:*`, `build`, `test:format` = `prettier --check`, `prepare` = `lefthook install`) |
 | Worktrees | `.cursor/worktrees.json` |
-| Workflow / release | `.github/workflows/on-push-main.yml` (calls `sargonpiraev/ci`; no `NPM_TOKEN`) |
+| Workflow / release | `.github/workflows/on-push-main.yml` (calls `sargonpiraev/shared`; no `NPM_TOKEN`) |
 | Playwright | `playwright.config.ts` / `apps/{webapp,docapp,extapp}/playwright.config.ts` via `project-harness/playwright-config` (eval projects + suite specs) |
 | Repo / apps | `repo.harness.json` + disk `apps/*` allowlist |
-| Prettier | `package.json#prettier` → `@sargonpiraev/prettier-config` |
-| TypeScript | root `tsconfig.json` / `tsconfig.base.json` extends `@sargonpiraev/tsconfig` |
+| Prettier | `prettier.config.mjs` → `@sargonpiraev/prettier-config` (not package.json `prettier` key) |
+| TypeScript | root `tsconfig.json` extends `@sargonpiraev/tsconfig` |
 | Env | `env.harness.json` names-only `requiredKeys` + hand-maintained `.env.example` |
 | Pulumi | if `pulumi/` exists: `Pulumi.yaml`, TS entry, `pulumi:preview` / `pulumi:up`, `.gitignore` ignores `.env` + `.pulumi` (not whole `pulumi/`) |
 | semantic-release | `.releaserc.json` shape when present |
-| Lefthook | required `lefthook.yml` / `lefthook.yaml` → `remotes` → `sargonpiraev/ci` (`configs: lefthook.yml`); `scripts.prepare` must run `lefthook install` (hooks on `npm ci` / `npm install`) |
+| Lefthook | required `lefthook.yml` / `lefthook.yaml` → `remotes` → `sargonpiraev/shared` (`configs: ci/lefthook.yml`); `scripts.prepare` must run `lefthook install` (hooks on `npm ci` / `npm install`) |
 
 Meta-only gates (`meta__package`, meta lefthook, commitlint shape) stay in the private meta repo.
 
@@ -41,7 +41,7 @@ Wire into `test:lint` (example):
 eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \
   "project.json" "package.json" ".cursor/worktrees.json" \
   "repo.harness.json" "env.harness.json" "pulumi.harness.json" \
-  "tsconfig.json" "tsconfig.base.json" ".releaserc.json" \
+  "tsconfig.json" ".releaserc.json" \
   ".github/workflows/on-push-main.yml" \
   "playwright.config.ts" "apps/*/playwright.config.ts" \
   "lefthook.yml" "lefthook.yaml" ".gitignore"
@@ -52,10 +52,10 @@ eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-er
 ```yaml
 # lefthook.yml (required)
 remotes:
-  - git_url: https://github.com/sargonpiraev/ci
+  - git_url: https://github.com/sargonpiraev/shared
     ref: main
     configs:
-      - lefthook.yml
+      - ci/lefthook.yml
 ```
 
 ```json
@@ -107,7 +107,7 @@ export default [
 
 | Failure | Meaning |
 |---|---|
-| missing `prettier` / not `@sargonpiraev/prettier-config` | adopt shared Prettier package |
+| missing `prettier.config.mjs` / missing `@sargonpiraev/prettier-config` dep / leftover package.json `prettier` key | adopt shared Prettier via config file |
 | `test:format` without `prettier --check` | noops / `--write`-only rejected |
 | missing root tsconfig extending `@sargonpiraev/tsconfig` | adopt shared TS base (`strict: true`) |
 | missing / mismatched `repo.harness.json` | declare canonical `apps/*`; legacy `web`/`docs`/`mobile`/etc. forbidden |
@@ -116,9 +116,9 @@ export default [
 | `pulumi/` without yaml/entry/scripts | add `Pulumi.yaml`, TS entry, `pulumi:preview`/`pulumi:up` |
 | `pulumi/` without gitignore for `.env` / `.pulumi` | ignore secrets/state only (not the whole `pulumi/` tree) |
 | `NPM_TOKEN` in workflow | use Trusted Publishing OIDC + `id-token: write` |
-| missing `lefthook.yml` / `lefthook.yaml` | add remotes → `sargonpiraev/ci` + `"prepare": "lefthook install"` |
+| missing `lefthook.yml` / `lefthook.yaml` | add remotes → `sargonpiraev/shared` + `"prepare": "lefthook install"` |
 | `scripts.prepare` missing / not `lefthook install` | add `"prepare": "lefthook install"` (+ `lefthook` devDependency) |
-| lefthook without `remotes` → `sargonpiraev/ci` | pull shared `lefthook.yml` via remotes (no local hook duplication) |
+| lefthook without `remotes` → `sargonpiraev/shared` | pull shared `ci/lefthook.yml` via remotes (no local hook duplication) |
 | playwright config missing required projects / specs | add named projects + `*.<suite>.spec.ts` files |
 
 ## Schemas (IDE `$schema`)

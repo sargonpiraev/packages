@@ -10,8 +10,8 @@ permissions:
 
 jobs:
   base:
-    # Local reusable workflow (merged from former sargonpiraev/ci).
-    # External repos keep using sargonpiraev/ci until GitHub rename/archive.
+    # Local reusable workflow (former sargonpiraev/ci, now in this repo).
+    # External repos use sargonpiraev/shared/.github/workflows/….
     uses: ./.github/workflows/on-push-main.yml
     secrets: inherit
     with:

@@ -2,16 +2,7 @@
 
 Reusable workflows and composite actions for personal repos (merged from former `sargonpiraev/ci` into this monorepo).
 
-Consumers call them with (until GitHub rename/archive, the live remote may still be `sargonpiraev/ci`):
-
-```yaml
-jobs:
-  base:
-    uses: sargonpiraev/ci/.github/workflows/on-push-main.yml@main
-    secrets: inherit
-```
-
-After GitHub rename to `sargonpiraev/shared`:
+Consumers call them with:
 
 ```yaml
 jobs:
@@ -67,20 +58,10 @@ Provider baseline: [`../ci/lefthook.yml`](../ci/lefthook.yml) (mirrors `on-push-
 | `commit-msg` | Conventional Commits via commitlint |
 | `pre-push` (parallel) | `lint`, `check-types`, `build`, `test`, `audit` |
 
-In a consumer repo (until rename, still `sargonpiraev/ci` + root `lefthook.yml`):
+In a consumer repo:
 
 ```yaml
 # lefthook.yml
-remotes:
-  - git_url: https://github.com/sargonpiraev/ci
-    ref: main
-    configs:
-      - lefthook.yml
-```
-
-After GitHub rename to `shared`:
-
-```yaml
 remotes:
   - git_url: https://github.com/sargonpiraev/shared
     ref: main

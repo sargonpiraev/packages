@@ -2,9 +2,9 @@
   "name": "@sargonpiraev/prettier-config",
   "version": "0.0.0",
   "description": "Shared Prettier config for sargonpiraev products and packages",
-  "main": "./index.json",
+  "main": "./index.js",
   "files": [
-    "index.json",
+    "index.js",
     "README.md",
     "LICENSE"
   ],
@@ -33,7 +33,10 @@
     "build": "node -e \"console.log('noop build'); process.exit(0)\"",
     "check-types": "node -e \"console.log('noop check-types'); process.exit(0)\"",
     "lint": "node -e \"console.log('noop lint'); process.exit(0)\"",
-    "test": "node -e \"const c=require('./index.json'); if(c.printWidth!==100) process.exit(1)\""
+    "test": "node -e \"const c=require('./index.js'); if(c.printWidth!==100||!Array.isArray(c.plugins)||!c.plugins.length) process.exit(1)\""
+  },
+  "dependencies": {
+    "prettier-plugin-packagejson": "^3.0.2"
   },
   "publishConfig": {
     "access": "public",

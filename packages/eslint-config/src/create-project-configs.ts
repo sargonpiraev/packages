@@ -86,7 +86,6 @@ export function createProjectConfigs(
   const pulumiHarnessFiles = expandRoot(scope, ['pulumi.harness.json'])
   const tsconfigFiles = expandRoot(scope, [
     'tsconfig.json',
-    'tsconfig.base.json',
   ])
   // Package-level .releaserc.json (e.g. packages/packages/*) + project root
   const releasercFiles = expand(scope, ['.releaserc.json'])

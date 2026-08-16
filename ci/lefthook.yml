@@ -1,5 +1,5 @@
-# Mirrors sargonpiraev/ci on-push-main baseline checks.
-# Consumers pull this via remotes — see .github/workflows/README.md
+# Provider baseline for consumer lefthook remotes (path: ci/lefthook.yml).
+# Mirrors on-push-main baseline checks.
 
 commit-msg:
   commands:

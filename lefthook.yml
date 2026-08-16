@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=./node_modules/@sargonpiraev/eslint-config/build/schemas/project__lefthook.json
 remotes:
-  - git_url: https://github.com/sargonpiraev/ci
+  - git_url: https://github.com/sargonpiraev/shared
     ref: main
     configs:
-      - lefthook.yml
+      - ci/lefthook.yml
 
 # Audit stays in CI on-push-main (parity with workflow skip-audit).
 exclude_tags:

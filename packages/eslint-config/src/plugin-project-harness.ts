@@ -49,7 +49,7 @@ function hasTsconfigExtendsShared(root: string): {
   path?: string
   reason?: string
 } {
-  for (const name of ['tsconfig.json', 'tsconfig.base.json']) {
+  for (const name of ['tsconfig.json']) {
     const filePath = path.join(root, name)
     const data = readJsonFile<{
       extends?: string | string[]
@@ -77,7 +77,7 @@ function hasTsconfigExtendsShared(root: string): {
   }
   return {
     ok: false,
-    reason: `missing root tsconfig.json or tsconfig.base.json extending ${TSCONFIG_PACKAGE_PREFIX}`,
+    reason: `missing root tsconfig.json extending ${TSCONFIG_PACKAGE_PREFIX}`,
   }
 }
 
@@ -203,13 +203,17 @@ const inventoryRule: Rule.RuleModule = {
     },
     schema: [],
     messages: {
-      missingPrettier:
-        'package.json must set "prettier": "{{pkg}}" (shared Prettier config).',
+      missingPrettierConfig:
+        'missing prettier.config.mjs (export default from "{{pkg}}"; do not use package.json "prettier" key).',
+      missingPrettierDep:
+        'package.json must list "{{pkg}}" in dependencies or devDependencies.',
+      leftoverPrettierKey:
+        'package.json must not set "prettier" — use prettier.config.mjs exporting "{{pkg}}" instead.',
       missingTsconfig: '{{reason}}',
       missingRepoHarness:
         'missing repo.harness.json (declare layout + canonical apps).',
       missingLefthook:
-        'missing lefthook.yml (remotes → sargonpiraev/ci configs: [lefthook.yml]; hooks via scripts.prepare → lefthook install).',
+        'missing lefthook.yml (remotes → sargonpiraev/shared configs: [ci/lefthook.yml]; hooks via scripts.prepare → lefthook install).',
       missingLefthookPrepare:
         'package.json scripts.prepare must run lefthook install (wires git hooks on npm ci / npm install).',
       invalidRepoHarness: 'repo.harness.json: {{reason}}',
@@ -254,10 +258,29 @@ const inventoryRule: Rule.RuleModule = {
         }>(context.filename)
         if (!pkg) return
 
-        if (pkg.prettier !== PRETTIER_CONFIG_PACKAGE) {
+        if (pkg.prettier !== undefined) {
           context.report({
             node,
-            messageId: 'missingPrettier',
+            messageId: 'leftoverPrettierKey',
+            data: { pkg: PRETTIER_CONFIG_PACKAGE },
+          })
+        }
+
+        if (!fs.existsSync(path.join(root, 'prettier.config.mjs'))) {
+          context.report({
+            node,
+            messageId: 'missingPrettierConfig',
+            data: { pkg: PRETTIER_CONFIG_PACKAGE },
+          })
+        }
+
+        const hasPrettierDep =
+          Boolean(pkg.dependencies?.[PRETTIER_CONFIG_PACKAGE]) ||
+          Boolean(pkg.devDependencies?.[PRETTIER_CONFIG_PACKAGE])
+        if (!hasPrettierDep) {
+          context.report({
+            node,
+            messageId: 'missingPrettierDep',
             data: { pkg: PRETTIER_CONFIG_PACKAGE },
           })
         }

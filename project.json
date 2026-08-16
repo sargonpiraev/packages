@@ -95,6 +95,13 @@
       "options": {
         "cwd": "shared"
       }
+    },
+    "test:alint": {
+      "cache": false,
+      "command": "npm run test:alint",
+      "options": {
+        "cwd": "shared"
+      }
     }
   }
 }

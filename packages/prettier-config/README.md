@@ -2,15 +2,20 @@
 
 Shared Prettier config for portfolio products and the `packages` monorepo.
 
+Includes **`prettier-plugin-packagejson`** so `package.json` keys are sorted on format/check.
+
 ## Usage
 
-In product / repo root `package.json`:
+At product / repo / meta root — **`prettier.config.mjs`** (not the package.json `"prettier"` key):
+
+```js
+export { default } from '@sargonpiraev/prettier-config'
+```
 
 ```json
 {
-  "prettier": "@sargonpiraev/prettier-config",
   "scripts": {
-    "test:format": "prettier --check ."
+    "test:format": "prettier --check \"**/*.{ts,tsx,md,json}\""
   },
   "devDependencies": {
     "@sargonpiraev/prettier-config": "*",

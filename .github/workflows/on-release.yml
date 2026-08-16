@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: sargonpiraev/ci/.github/actions/setup-node-npm-ci@main
+      - uses: sargonpiraev/shared/.github/actions/setup-node-npm-ci@main
 
       - run: npm run build
 

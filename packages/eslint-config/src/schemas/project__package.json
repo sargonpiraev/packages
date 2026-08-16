@@ -1,14 +1,10 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Project/shared package.json test scripts",
-  "description": "Required npm script names for project/shared package.json. Checks use the test:* namespace; build is separate. test:format must be prettier --check (not write-only / noop). prettier must reference @sargonpiraev/prettier-config. prepare must run lefthook install (hooks after npm ci/install). Optional Playwright lane scripts (test:functional / test:seo / test:analytics / test:cwv) when the project has a webapp/docapp/extapp harness — inventory requires test:cwv when webapp/docapp (or flat-root playwright.config.ts) is present. Shipped by @sargonpiraev/eslint-config.",
+  "description": "Required npm script names for project/shared package.json. Checks use the test:* namespace; build is separate. test:format must be prettier --check (not write-only / noop). Shared Prettier is via root prettier.config.mjs (not package.json prettier key) — inventory enforces the file + @sargonpiraev/prettier-config dep. prepare must run lefthook install (hooks after npm ci/install). Optional Playwright lane scripts (test:functional / test:seo / test:analytics / test:cwv) when the project has a webapp/docapp/extapp harness — inventory requires test:cwv when webapp/docapp (or flat-root playwright.config.ts) is present. Shipped by @sargonpiraev/eslint-config.",
   "type": "object",
-  "required": ["scripts", "prettier"],
+  "required": ["scripts"],
   "properties": {
-    "prettier": {
-      "const": "@sargonpiraev/prettier-config",
-      "description": "Must extend the shared Prettier config package."
-    },
     "scripts": {
       "type": "object",
       "required": [
