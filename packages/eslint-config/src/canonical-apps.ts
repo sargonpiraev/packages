@@ -40,3 +40,5 @@ export const ENV_CONTRACT_APP_NAMES = [
 
 export const PRETTIER_CONFIG_PACKAGE = '@sargonpiraev/prettier-config'
 export const TSCONFIG_PACKAGE_PREFIX = '@sargonpiraev/tsconfig'
+export const COMMITLINT_CONFIG_PACKAGE = '@sargonpiraev/commitlint-config'
+export const ESLINT_CONFIG_PACKAGE = '@sargonpiraev/eslint-config'

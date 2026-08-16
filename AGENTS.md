@@ -7,11 +7,12 @@ Shared monorepo (former `packages` + `ci`).
 - **mcp-*** — MCP servers over clients
 - **eslint-config** — shared project ESLint flat-config + inventory/harness JSON schemas (`@sargonpiraev/eslint-config`)
 - **prettier-config** — shared Prettier (`@sargonpiraev/prettier-config`)
+- **commitlint-config** — shared Commitlint conventional preset (`@sargonpiraev/commitlint-config`)
 - **tsconfig** — shared TypeScript base with `strict: true` (`@sargonpiraev/tsconfig`)
-- **ci/** — Lefthook remotes provider baseline (`ci/lefthook.yml`)
+- **ci/** — Lefthook remotes provider baseline (`ci/lefthook.yml`) + alint project rules (`ci/alint/`)
 - **.github/** — reusable GitHub Actions workflows + composite actions (from former `sargonpiraev/ci`)
 
-Root `repo.harness.json` + `"prettier": "@sargonpiraev/prettier-config"` + `tsconfig.base.json` extends `@sargonpiraev/tsconfig` are the pilot for hard project harness gates.
+Root thin extends: `prettier.config.mjs`, `commitlint.config.cjs`, `tsconfig.json`, `eslint.config.mjs`, `.alint.yml`, `lefthook.yml` — see meta `ws__meta-shared-projects-boundaries`.
 
 Do not put meta-only code here — that belongs in private meta `internal/`.
 Projects and jobs depend on published npm versions, not `file:` into private meta (meta may use `file:` while iterating).

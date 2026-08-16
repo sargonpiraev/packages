@@ -3,7 +3,9 @@ import path from 'node:path'
 import type { ESLint, Linter, Rule } from 'eslint'
 import {
   CANONICAL_APP_NAMES,
+  COMMITLINT_CONFIG_PACKAGE,
   ENV_CONTRACT_APP_NAMES,
+  ESLINT_CONFIG_PACKAGE,
   FORBIDDEN_APP_NAMES,
   PRETTIER_CONFIG_PACKAGE,
   TSCONFIG_PACKAGE_PREFIX,
@@ -199,7 +201,7 @@ const inventoryRule: Rule.RuleModule = {
     type: 'problem',
     docs: {
       description:
-        'Hard project harness: prettier, tsconfig, lefthook, repo apps, env, pulumi, npm token hygiene',
+        'Hard project harness: prettier, commitlint, eslint, tsconfig, lefthook, repo apps, env, pulumi, npm token hygiene',
     },
     schema: [],
     messages: {
@@ -209,6 +211,14 @@ const inventoryRule: Rule.RuleModule = {
         'package.json must list "{{pkg}}" in dependencies or devDependencies.',
       leftoverPrettierKey:
         'package.json must not set "prettier" — use prettier.config.mjs exporting "{{pkg}}" instead.',
+      missingCommitlintConfig:
+        'missing commitlint.config.cjs (extends: ["{{pkg}}"]).',
+      missingCommitlintDep:
+        'package.json must list "{{pkg}}" in dependencies or devDependencies.',
+      missingEslintConfig:
+        'missing eslint.config.mjs (import/spread "{{pkg}}/project" or "{{pkg}}/project-meta").',
+      missingEslintDep:
+        'package.json must list "{{pkg}}" in dependencies or devDependencies.',
       missingTsconfig: '{{reason}}',
       missingRepoHarness:
         'missing repo.harness.json (declare layout + canonical apps).',
@@ -282,6 +292,44 @@ const inventoryRule: Rule.RuleModule = {
             node,
             messageId: 'missingPrettierDep',
             data: { pkg: PRETTIER_CONFIG_PACKAGE },
+          })
+        }
+
+        if (!fs.existsSync(path.join(root, 'commitlint.config.cjs'))) {
+          context.report({
+            node,
+            messageId: 'missingCommitlintConfig',
+            data: { pkg: COMMITLINT_CONFIG_PACKAGE },
+          })
+        }
+
+        const hasCommitlintDep =
+          Boolean(pkg.dependencies?.[COMMITLINT_CONFIG_PACKAGE]) ||
+          Boolean(pkg.devDependencies?.[COMMITLINT_CONFIG_PACKAGE])
+        if (!hasCommitlintDep) {
+          context.report({
+            node,
+            messageId: 'missingCommitlintDep',
+            data: { pkg: COMMITLINT_CONFIG_PACKAGE },
+          })
+        }
+
+        if (!fs.existsSync(path.join(root, 'eslint.config.mjs'))) {
+          context.report({
+            node,
+            messageId: 'missingEslintConfig',
+            data: { pkg: ESLINT_CONFIG_PACKAGE },
+          })
+        }
+
+        const hasEslintDep =
+          Boolean(pkg.dependencies?.[ESLINT_CONFIG_PACKAGE]) ||
+          Boolean(pkg.devDependencies?.[ESLINT_CONFIG_PACKAGE])
+        if (!hasEslintDep) {
+          context.report({
+            node,
+            messageId: 'missingEslintDep',
+            data: { pkg: ESLINT_CONFIG_PACKAGE },
           })
         }
 

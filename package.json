@@ -14,15 +14,14 @@
     "test:unit": "turbo run test",
     "test:lint": "eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \"project.json\" \"package.json\" \".cursor/worktrees.json\" \"repo.harness.json\" \"env.harness.json\" \"pulumi.harness.json\" \"tsconfig.json\" \".releaserc.json\" \".github/workflows/on-push-main.yml\" \"playwright.config.ts\" \"apps/*/playwright.config.ts\" \".gitignore\" && npm run lint",
     "test:check-types": "npm run check-types",
-    "test:spec": "node -e \"console.log('noop test:spec \u2014 N/A'); process.exit(0)\"",
-    "test:visual": "node -e \"console.log('noop test:visual \u2014 N/A'); process.exit(0)\"",
+    "test:spec": "node -e \"console.log('noop test:spec — N/A'); process.exit(0)\"",
+    "test:visual": "node -e \"console.log('noop test:visual — N/A'); process.exit(0)\"",
     "test:format": "prettier --check \"**/*.{ts,tsx,md,json}\"",
     "test:alint": "alint check"
   },
   "devDependencies": {
     "@asamarts/alint": "^0.14.2",
     "@commitlint/cli": "^21.2.1",
-    "@commitlint/config-conventional": "^21.2.0",
     "@eslint/js": "^9.26.0",
     "@sargonpiraev/eslint-config": "file:packages/eslint-config",
     "@sargonpiraev/prettier-config": "file:packages/prettier-config",
@@ -44,7 +43,8 @@
     "ts-jest": "^29.3.2",
     "turbo": "^2.10.3",
     "typescript": "5.9.2",
-    "typescript-eslint": "^8.31.1"
+    "typescript-eslint": "^8.31.1",
+    "@sargonpiraev/commitlint-config": "file:packages/commitlint-config"
   },
   "engines": {
     "node": ">=20"
