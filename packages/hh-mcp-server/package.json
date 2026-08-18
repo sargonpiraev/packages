@@ -2,9 +2,29 @@
   "name": "@sargonpiraev/hh-mcp-server",
   "version": "1.22.0",
   "description": "MCP server for HeadHunter job search API",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "hh"
+  ],
+  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/hh-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/shared/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargonpiraev/shared.git",
+    "directory": "packages/hh-mcp-server"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com"
+  },
+  "type": "module",
   "main": "./build/main.js",
   "types": "./build/main.d.ts",
-  "type": "module",
   "bin": {
     "hh-mcp-server": "./bin/hh-mcp-server.js"
   },
@@ -14,53 +34,33 @@
     "LICENSE",
     "bin"
   ],
-  "keywords": [
-    "mcp",
-    "mcp-server",
-    "model-context-protocol",
-    "hh"
-  ],
-  "author": {
-    "name": "Sargon Piraev",
-    "email": "sargonpiraev@gmail.com"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sargonpiraev/shared.git",
-    "directory": "packages/hh-mcp-server"
-  },
-  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/hh-mcp-server#readme",
-  "bugs": {
-    "url": "https://github.com/sargonpiraev/shared/issues"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "check-types": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint ./src --ext .ts",
     "test": "jest --passWithNoTests --coverage"
   },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.0",
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.18.2",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/debug": "^4.1.12",
+    "@types/express": "^4.17.17",
+    "@types/minimatch": "^5.1.2",
+    "@types/node": "^22.15.3",
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "publishConfig": {
     "access": "public",
     "provenance": true
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.11.0",
-    "dotenv": "^16.5.0",
-    "zod": "^3.24.3",
-    "axios": "^1.7.7",
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
-  },
-  "devDependencies": {
-    "@types/node": "^22.15.3",
-    "typescript": "^5.8.3",
-    "@types/express": "^4.17.17",
-    "@types/cors": "^2.8.13",
-    "@types/debug": "^4.1.12",
-    "@types/minimatch": "^5.1.2"
   }
 }

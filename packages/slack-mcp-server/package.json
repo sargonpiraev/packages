@@ -2,9 +2,29 @@
   "name": "@sargonpiraev/slack-mcp-server",
   "version": "1.1.0",
   "description": "MCP server for Slack interactions",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "slack"
+  ],
+  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/slack-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/shared/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargonpiraev/shared.git",
+    "directory": "packages/slack-mcp-server"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com"
+  },
+  "type": "module",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
-  "type": "module",
   "bin": {
     "slack-mcp-server": "./bin/slack-mcp-server.js"
   },
@@ -14,38 +34,11 @@
     "LICENSE",
     "bin"
   ],
-  "keywords": [
-    "mcp",
-    "mcp-server",
-    "model-context-protocol",
-    "slack"
-  ],
-  "author": {
-    "name": "Sargon Piraev",
-    "email": "sargonpiraev@gmail.com"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sargonpiraev/shared.git",
-    "directory": "packages/slack-mcp-server"
-  },
-  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/slack-mcp-server#readme",
-  "bugs": {
-    "url": "https://github.com/sargonpiraev/shared/issues"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "check-types": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint ./src --ext .ts",
     "test": "jest --passWithNoTests --coverage"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.11.0",
@@ -55,6 +48,13 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
-    "typescript": "^5.8.3"
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }

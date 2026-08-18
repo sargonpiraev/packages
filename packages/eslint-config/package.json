@@ -2,8 +2,28 @@
   "name": "@sargonpiraev/eslint-config",
   "version": "0.0.0",
   "description": "Shared ESLint flat-config presets and JSON schemas for project harness / test:* inventory gates",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "json-schema",
+    "playwright",
+    "nx",
+    "harness"
+  ],
+  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/eslint-config#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/shared/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargonpiraev/shared.git",
+    "directory": "packages/eslint-config"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com"
+  },
   "type": "module",
   "exports": {
     ".": {
@@ -20,57 +40,37 @@
     },
     "./schemas/*": "./build/schemas/*"
   },
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "files": [
     "build",
     "README.md",
     "LICENSE"
   ],
-  "keywords": [
-    "eslint",
-    "eslint-config",
-    "json-schema",
-    "playwright",
-    "nx",
-    "harness"
-  ],
-  "author": {
-    "name": "Sargon Piraev",
-    "email": "sargonpiraev@gmail.com"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sargonpiraev/shared.git",
-    "directory": "packages/eslint-config"
-  },
-  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/eslint-config#readme",
-  "bugs": {
-    "url": "https://github.com/sargonpiraev/shared/issues"
-  },
-  "engines": {
-    "node": ">=22"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.json && mkdir -p build/schemas && cp src/schemas/*.json build/schemas/",
     "check-types": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint ./src --ext .ts",
     "test": "npm run build && tsc -p tsconfig.test.json && node --test build/__tests__/create-project-configs.test.js"
   },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  },
   "dependencies": {
     "jiti": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.33",
+    "eslint": "9.39.5",
+    "eslint-plugin-json-schema-validator": "^6.3.1",
+    "typescript": "5.9.2"
   },
   "peerDependencies": {
     "eslint": ">=9.0.0",
     "eslint-plugin-json-schema-validator": ">=6.0.0"
   },
-  "devDependencies": {
-    "@types/node": "^22.15.33",
-    "eslint": "^9.26.0",
-    "eslint-plugin-json-schema-validator": "^6.3.1",
-    "typescript": "^5.8.3"
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }

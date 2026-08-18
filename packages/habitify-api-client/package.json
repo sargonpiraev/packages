@@ -2,14 +2,6 @@
   "name": "@sargonpiraev/habitify-api-client",
   "version": "1.8.3",
   "description": "A TypeScript client for the Habitify API with complete type safety and modern developer experience.",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
-  "type": "module",
-  "files": [
-    "build",
-    "README.md",
-    "LICENSE"
-  ],
   "keywords": [
     "api-client",
     "typescript",
@@ -19,34 +11,35 @@
     "productivity",
     "tracking"
   ],
-  "author": {
-    "name": "Sargon Piraev",
-    "email": "sargonpiraev@gmail.com",
-    "url": "https://sargonpiraev.com"
+  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/habitify-api-client#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/shared/issues"
   },
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sargonpiraev/shared.git",
     "directory": "packages/habitify-api-client"
   },
-  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/habitify-api-client#readme",
-  "bugs": {
-    "url": "https://github.com/sargonpiraev/shared/issues"
+  "license": "MIT",
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com",
+    "url": "https://sargonpiraev.com"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
+  "type": "module",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "files": [
+    "build",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "check-types": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint ./src --ext .ts",
     "test": "jest --passWithNoTests --coverage",
     "test:request": "tsx script/test-request.ts"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
   },
   "dependencies": {
     "axios": "^1.9.0"
@@ -55,6 +48,13 @@
     "@types/node": "^22.15.3",
     "dotenv": "^17.0.1",
     "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }

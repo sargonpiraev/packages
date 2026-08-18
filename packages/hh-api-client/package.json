@@ -2,14 +2,6 @@
   "name": "@sargonpiraev/hh-api-client",
   "version": "1.1.1",
   "description": "A TypeScript client for the HeadHunter API, generated from the official OpenAPI specification.",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
-  "type": "module",
-  "files": [
-    "build",
-    "README.md",
-    "LICENSE"
-  ],
   "keywords": [
     "api-client",
     "typescript",
@@ -20,33 +12,34 @@
     "job-search",
     "recruiting"
   ],
-  "author": {
-    "name": "Sargon Piraev",
-    "email": "sargonpiraev@gmail.com"
+  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/hh-api-client#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/shared/issues"
   },
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sargonpiraev/shared.git",
     "directory": "packages/hh-api-client"
   },
-  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/hh-api-client#readme",
-  "bugs": {
-    "url": "https://github.com/sargonpiraev/shared/issues"
+  "license": "MIT",
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
+  "type": "module",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "files": [
+    "build",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "generate": "openapi-ts",
     "build": "tsc -p tsconfig.json",
     "check-types": "tsc -p tsconfig.json --noEmit",
+    "generate": "openapi-ts",
     "lint": "eslint ./src --ext .ts",
     "test": "jest --passWithNoTests --coverage"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
   },
   "dependencies": {
     "@hey-api/client-axios": "^0.9.1",
@@ -55,6 +48,13 @@
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.77.0",
     "@types/node": "^22.15.33",
-    "typescript": "^5.8.3"
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }

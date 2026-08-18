@@ -2,9 +2,29 @@
   "name": "@sargonpiraev/pulumi-gsc",
   "version": "0.0.0",
   "description": "Pulumi provider for Google Search Console properties",
+  "keywords": [
+    "pulumi",
+    "provider",
+    "gsc",
+    "infrastructure"
+  ],
+  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/pulumi-gsc#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/shared/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargonpiraev/shared.git",
+    "directory": "packages/pulumi-gsc"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com"
+  },
+  "type": "module",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
-  "type": "module",
   "bin": {
     "pulumi-resource-gsc": "./bin/pulumi-resource-gsc.js"
   },
@@ -14,46 +34,26 @@
     "README.md",
     "LICENSE"
   ],
-  "keywords": [
-    "pulumi",
-    "provider",
-    "gsc",
-    "infrastructure"
-  ],
-  "author": {
-    "name": "Sargon Piraev",
-    "email": "sargonpiraev@gmail.com"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sargonpiraev/shared.git",
-    "directory": "packages/pulumi-gsc"
-  },
-  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/pulumi-gsc#readme",
-  "bugs": {
-    "url": "https://github.com/sargonpiraev/shared/issues"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "check-types": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint ./src --ext .ts",
     "test": "jest --passWithNoTests --coverage"
   },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  },
   "dependencies": {
-    "@pulumi/pulumi": "^3.0.0",
     "@googleapis/searchconsole": "^6.0.1",
+    "@pulumi/pulumi": "^3.0.0",
     "google-auth-library": "^10.6.2"
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
-    "typescript": "^5.8.3"
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
