@@ -140,7 +140,30 @@ describe('createProjectConfigs', () => {
       }
     ).properties.scripts
     assert.ok(packageScripts.required.includes('prepare'))
+    assert.ok(packageScripts.required.includes('test:eslint'))
+    assert.ok(packageScripts.required.includes('test:alint'))
+    assert.equal(
+      (
+        packageScripts.properties as {
+          'test:lint'?: unknown
+        }
+      )['test:lint'],
+      false,
+    )
     assert.match(packageScripts.properties.prepare.pattern, /lefthook/)
+    const projectTargets = (
+      schemas.projectProject as {
+        properties: {
+          targets: {
+            required: string[]
+            properties: { 'test:lint'?: unknown }
+          }
+        }
+      }
+    ).properties.targets
+    assert.ok(projectTargets.required.includes('test:eslint'))
+    assert.ok(projectTargets.required.includes('test:alint'))
+    assert.equal(projectTargets.properties['test:lint'], false)
     assert.ok(!('appPlaywrightWebapp' in schemas))
     assert.ok(!('appPlaywrightExtapp' in schemas))
     assert.ok(CANONICAL_APP_NAMES.includes('webapp'))

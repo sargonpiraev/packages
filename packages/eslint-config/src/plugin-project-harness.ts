@@ -239,6 +239,8 @@ const inventoryRule: Rule.RuleModule = {
         'committed .npmrc must not contain npm tokens / auth (use Trusted Publishing OIDC).',
       missingTestCwv:
         'webapp/docapp (or flat-root playwright.config.ts) requires package.json scripts.test:cwv (Core Web Vitals lab lane; not part of test:spec).',
+      forbiddenTestLint:
+        'package.json must not define scripts.test:lint — use scripts.test:eslint (tool-named).',
     },
   },
   create(context) {
@@ -253,6 +255,10 @@ const inventoryRule: Rule.RuleModule = {
           devDependencies?: Record<string, string>
         }>(context.filename)
         if (!pkg) return
+
+        if (pkg.scripts?.['test:lint'] !== undefined) {
+          context.report({ node, messageId: 'forbiddenTestLint' })
+        }
 
         if (pkg.prettier !== undefined) {
           context.report({
