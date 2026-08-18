@@ -229,6 +229,8 @@ const inventoryRule: Rule.RuleModule = {
         'pulumi/ exists but TypeScript entry missing (index.ts or src/index.ts).',
       missingPulumiScripts:
         'pulumi/ exists but package.json scripts must include pulumi:preview and pulumi:up.',
+      missingPulumiEnvExample:
+        'pulumi/ exists but pulumi/.env.example is missing (hand-maintained token contract; no secrets).',
       missingPulumiGitignoreEnv:
         'pulumi/ exists but .gitignore must ignore pulumi/.env (e.g. .env, **/.env, or pulumi/.env) — not the whole pulumi/ tree.',
       missingPulumiGitignoreState:
@@ -419,6 +421,9 @@ const inventoryRule: Rule.RuleModule = {
           const scripts = pkg.scripts ?? {}
           if (!scripts['pulumi:preview'] || !scripts['pulumi:up']) {
             context.report({ node, messageId: 'missingPulumiScripts' })
+          }
+          if (!fs.existsSync(path.join(pulumiDir, '.env.example'))) {
+            context.report({ node, messageId: 'missingPulumiEnvExample' })
           }
           const gi = getPulumiGitignoreStatus(root)
           if (gi.ignoresWholeTree) {
