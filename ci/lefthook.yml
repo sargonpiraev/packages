@@ -10,7 +10,7 @@ pre-push:
   parallel: false
   commands:
     lint:
-      run: npm run lint
+      run: npm run test:eslint
     check-types:
       run: npm run check-types
     build:

@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: sargonpiraev/shared/.github/actions/setup-node-npm-ci@main
-      - run: npm run lint
+      - run: npm run test:eslint
 
   check-types:
     runs-on: ubuntu-latest

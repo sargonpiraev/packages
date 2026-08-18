@@ -22,7 +22,7 @@
       "required": [
         "test",
         "test:unit",
-        "test:lint",
+        "test:eslint",
         "test:check-types",
         "test:spec",
         "test:visual",
@@ -32,7 +32,7 @@
       "properties": {
         "test": { "type": "object" },
         "test:unit": { "type": "object" },
-        "test:lint": { "type": "object" },
+        "test:eslint": { "type": "object" },
         "test:check-types": { "type": "object" },
         "test:spec": { "type": "object" },
         "test:functional": { "type": "object" },

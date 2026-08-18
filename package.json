@@ -18,7 +18,7 @@
     "test:alint": "alint check",
     "test:check-types": "npm run check-types",
     "test:format": "prettier --check \"**/*.{ts,tsx,md,json}\"",
-    "test:lint": "eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \"project.json\" \"package.json\" \".cursor/worktrees.json\" \"tsconfig.json\" \".releaserc.json\" \"packages/*/.releaserc.json\" \".github/workflows/on-push-main.yml\" \"playwright.config.ts\" \"apps/*/playwright.config.ts\" \".gitignore\" && npm run lint",
+    "test:eslint": "eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \"project.json\" \"package.json\" \".cursor/worktrees.json\" \"tsconfig.json\" \".releaserc.json\" \"packages/*/.releaserc.json\" \".github/workflows/on-push-main.yml\" \"playwright.config.ts\" \"apps/*/playwright.config.ts\" \".gitignore\" && npm run lint",
     "test:spec": "node -e \"console.log('noop test:spec — N/A'); process.exit(0)\"",
     "test:unit": "turbo run test",
     "test:visual": "node -e \"console.log('noop test:visual — N/A'); process.exit(0)\""

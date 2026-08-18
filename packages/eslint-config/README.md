@@ -36,7 +36,7 @@ import project from '@sargonpiraev/eslint-config/project'
 export default [...project]
 ```
 
-Wire into `test:lint` (example):
+Wire into `test:eslint` (example):
 
 ```bash
 eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \
