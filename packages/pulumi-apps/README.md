@@ -8,7 +8,7 @@ One package, multiple modules — not one npm package per app type.
 
 | Export | Type token | Role |
 | --- | --- | --- |
-| `Webapp` | `sargonpiraev:apps:Webapp` | GSC property + BQ bulk-export dataset/IAM; optional GA4 ids as outputs. **No** custom CF (native GSC/GA→BQ). |
+| `Webapp` | `sargonpiraev:apps:Webapp` | GSC property + BQ bulk-export dataset/IAM; optional GA4 property + BigQuery link via `@sargonpiraev/pulumi-ga4`. **No** custom CF (native GSC/GA→BQ). |
 | `Extapp` | `sargonpiraev:apps:Extapp` | CWS listing → BQ `product_cws` + Gen1 CF + Scheduler |
 | `Mobapp` | `sargonpiraev:apps:Mobapp` | ASC → BQ `product_appstore` + Gen1 CF + Scheduler (Play later) |
 | `NpmDownloadsEtl` | `sargonpiraev:apps:NpmDownloadsEtl` | npm downloads → `product_npm` |
@@ -71,8 +71,8 @@ CF **source archives stay in the consuming stack** (meta `pulumi/dwhapp/function
 | `Webapp` | **Fully wired** — successor of `@sargonpiraev/pulumi-webapp-analytics` |
 | `Extapp` | **Wired** — dataset + listing table + CF + Scheduler |
 | `Mobapp` | **Wired** — dataset + core tables + secrets IAM + CF + Scheduler |
-| `NpmDownloadsEtl` | **Wired** — dataset + table + CF + Scheduler |
-| `VercelFinopsEtl` / `NeonFinopsEtl` | **Wired** — tables + secrets IAM + CF + Scheduler (finops dataset must already exist) |
+| `NpmDownloadsEtl` | **Wired** — dataset + table + CF + Scheduler; optional `childAliases` for meta wrap |
+| `VercelFinopsEtl` / `NeonFinopsEtl` | **Wired** — tables + secrets IAM + CF + Scheduler (finops dataset must already exist); optional `childAliases` for meta wrap |
 
 ## Migration notes
 

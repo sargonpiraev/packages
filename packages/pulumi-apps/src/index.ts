@@ -27,12 +27,15 @@ export {
   NPM_DOWNLOADS_ETL_TYPE,
   NpmDownloadsEtl,
   type NpmDownloadsEtlArgs,
+  type NpmDownloadsEtlChildAliases,
   VERCEL_FINOPS_ETL_TYPE,
   VercelFinopsEtl,
   type VercelFinopsEtlArgs,
+  type VercelFinopsEtlChildAliases,
   NEON_FINOPS_ETL_TYPE,
   NeonFinopsEtl,
   type NeonFinopsEtlArgs,
+  type NeonFinopsEtlChildAliases,
 } from "./finops/index.js";
 
 export {

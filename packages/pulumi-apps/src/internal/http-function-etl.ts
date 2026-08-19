@@ -2,6 +2,19 @@ import * as gcp from "@pulumi/gcp";
 import * as pulumi from "@pulumi/pulumi";
 import { childOpts } from "./child-opts.js";
 
+/** Previous stack-root names for Gen1 HTTP CF + Scheduler children. */
+export type HttpFunctionEtlChildAliases = {
+  cloudfunctionsApi?: string;
+  storageApi?: string;
+  scheduler?: string;
+  schedulerDeployerActas?: string;
+  sourceBucket?: string;
+  sourceZip?: string;
+  function?: string;
+  schedulerInvoker?: string;
+  schedule?: string;
+};
+
 export type HttpFunctionEtlArgs = {
   /** Logical prefix for child resource names. */
   name: string;
@@ -39,6 +52,7 @@ export type HttpFunctionEtlArgs = {
   schedulerApi: gcp.projects.Service;
   dependsOn?: pulumi.Input<pulumi.Resource>[];
   ignoreSecretEnvDiff?: boolean;
+  childAliases?: HttpFunctionEtlChildAliases;
 };
 
 export type HttpFunctionEtlResult = {
@@ -64,6 +78,7 @@ export function createHttpFunctionEtl(
   const attemptDeadline = args.attemptDeadline ?? "180s";
   const parent = args.parent;
   const name = args.name;
+  const aliases = args.childAliases ?? {};
 
   const cloudfunctionsApi = new gcp.projects.Service(
     `${name}-cloudfunctions-api`,
@@ -72,7 +87,7 @@ export function createHttpFunctionEtl(
       service: "cloudfunctions.googleapis.com",
       disableOnDestroy: false,
     },
-    childOpts(parent, undefined, { provider: args.provider }),
+    childOpts(parent, aliases.cloudfunctionsApi, { provider: args.provider }),
   );
 
   const storageApi = new gcp.projects.Service(
@@ -82,7 +97,7 @@ export function createHttpFunctionEtl(
       service: "storage.googleapis.com",
       disableOnDestroy: false,
     },
-    childOpts(parent, undefined, { provider: args.provider }),
+    childOpts(parent, aliases.storageApi, { provider: args.provider }),
   );
 
   const schedulerSa = new gcp.serviceaccount.Account(
@@ -92,7 +107,7 @@ export function createHttpFunctionEtl(
       displayName: pulumi.interpolate`${args.functionName} scheduler invoker`,
       project: args.projectId,
     },
-    childOpts(parent, undefined, { provider: args.provider }),
+    childOpts(parent, aliases.scheduler, { provider: args.provider }),
   );
 
   new gcp.serviceaccount.IAMMember(
@@ -102,7 +117,7 @@ export function createHttpFunctionEtl(
       role: "roles/iam.serviceAccountUser",
       member: pulumi.interpolate`serviceAccount:${args.deployerSaEmail}`,
     },
-    childOpts(parent, undefined, {
+    childOpts(parent, aliases.schedulerDeployerActas, {
       provider: args.provider,
       dependsOn: [schedulerSa],
     }),
@@ -118,7 +133,7 @@ export function createHttpFunctionEtl(
       forceDestroy: true,
       publicAccessPrevention: "enforced",
     },
-    childOpts(parent, undefined, {
+    childOpts(parent, aliases.sourceBucket, {
       provider: args.provider,
       dependsOn: [storageApi],
     }),
@@ -131,7 +146,7 @@ export function createHttpFunctionEtl(
       bucket: sourceBucket.name,
       source: args.sourceArchive,
     },
-    childOpts(parent, undefined, {
+    childOpts(parent, aliases.sourceZip, {
       provider: args.provider,
       dependsOn: [sourceBucket],
     }),
@@ -156,13 +171,9 @@ export function createHttpFunctionEtl(
       environmentVariables: args.environmentVariables,
       secretEnvironmentVariables: args.secretEnvironmentVariables,
     },
-    childOpts(parent, undefined, {
+    childOpts(parent, aliases.function, {
       provider: args.provider,
-      dependsOn: [
-        cloudfunctionsApi,
-        sourceObject,
-        ...(args.dependsOn ?? []),
-      ],
+      dependsOn: [cloudfunctionsApi, sourceObject, ...(args.dependsOn ?? [])],
       ...(args.ignoreSecretEnvDiff
         ? { ignoreChanges: ["secretEnvironmentVariables"] }
         : {}),
@@ -178,7 +189,7 @@ export function createHttpFunctionEtl(
       role: "roles/cloudfunctions.invoker",
       member: pulumi.interpolate`serviceAccount:${schedulerSa.email}`,
     },
-    childOpts(parent, undefined, {
+    childOpts(parent, aliases.schedulerInvoker, {
       provider: args.provider,
       dependsOn: [fn, schedulerSa],
     }),
@@ -210,7 +221,7 @@ export function createHttpFunctionEtl(
         },
       },
     },
-    childOpts(parent, undefined, {
+    childOpts(parent, aliases.schedule, {
       provider: args.provider,
       dependsOn: [args.schedulerApi, fn, schedulerSa],
     }),

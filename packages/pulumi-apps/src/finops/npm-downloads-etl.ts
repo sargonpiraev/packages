@@ -1,11 +1,28 @@
 import * as gcp from "@pulumi/gcp";
 import * as pulumi from "@pulumi/pulumi";
 import { childOpts } from "../internal/child-opts.js";
-import { createHttpFunctionEtl } from "../internal/http-function-etl.js";
+import {
+  createHttpFunctionEtl,
+  type HttpFunctionEtlChildAliases,
+} from "../internal/http-function-etl.js";
 
 /** URN type token — governance `test:pulumi` asserts this ComponentResource is registered. */
 export const NPM_DOWNLOADS_ETL_TYPE =
   "sargonpiraev:apps:NpmDownloadsEtl" as const;
+
+export type NpmDownloadsEtlChildAliases = {
+  gcpProvider?: string;
+  bigqueryApi?: string;
+  schedulerApi?: string;
+  dataset?: string;
+  table?: string;
+  readerViewer?: string;
+  loader?: string;
+  loaderDeployerActas?: string;
+  loaderJobUser?: string;
+  loaderDataEditor?: string;
+  etl?: HttpFunctionEtlChildAliases;
+};
 
 export type NpmDownloadsEtlArgs = {
   gcpProjectId: pulumi.Input<string>;
@@ -25,6 +42,8 @@ export type NpmDownloadsEtlArgs = {
   schedulerAccountId?: string;
   deployerSaEmail?: pulumi.Input<string>;
   downloadsPeriod?: pulumi.Input<string>;
+  /** Previous stack-root names when wrapping meta dwhapp into this component. */
+  childAliases?: NpmDownloadsEtlChildAliases;
 };
 
 /**
@@ -34,8 +53,12 @@ export type NpmDownloadsEtlArgs = {
 export class NpmDownloadsEtl extends pulumi.ComponentResource {
   public readonly dataset: gcp.bigquery.Dataset;
   public readonly table: gcp.bigquery.Table;
+  public readonly loaderSa: gcp.serviceaccount.Account;
   public readonly functionUrl: pulumi.Output<string>;
   public readonly datasetId: pulumi.Output<string>;
+  public readonly tableId: pulumi.Output<string>;
+  public readonly loaderSaEmail: pulumi.Output<string>;
+  public readonly scheduleJobName: pulumi.Output<string>;
 
   constructor(
     name: string,
@@ -44,6 +67,7 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
   ) {
     super(NPM_DOWNLOADS_ETL_TYPE, name, args, opts);
 
+    const aliases = args.childAliases ?? {};
     const datasetId = args.datasetId ?? "product_npm";
     const tableId = args.tableId ?? "package_downloads_daily";
     const functionName = args.functionName ?? "npm-downloads-etl";
@@ -63,7 +87,7 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
     const gcpProvider = new gcp.Provider(
       `${name}-gcp`,
       { project: args.gcpProjectId, credentials },
-      childOpts(this, undefined),
+      childOpts(this, aliases.gcpProvider),
     );
 
     const bigqueryApi = new gcp.projects.Service(
@@ -73,7 +97,7 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
         service: "bigquery.googleapis.com",
         disableOnDestroy: false,
       },
-      childOpts(this, undefined, { provider: gcpProvider }),
+      childOpts(this, aliases.bigqueryApi, { provider: gcpProvider }),
     );
 
     const schedulerApi = new gcp.projects.Service(
@@ -83,7 +107,7 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
         service: "cloudscheduler.googleapis.com",
         disableOnDestroy: false,
       },
-      childOpts(this, undefined, { provider: gcpProvider }),
+      childOpts(this, aliases.schedulerApi, { provider: gcpProvider }),
     );
 
     this.dataset = new gcp.bigquery.Dataset(
@@ -95,7 +119,7 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
         description: "npm download stats for @sargonpiraev/* (product domain)",
         labels: { domain: "product", source: "npm" },
       },
-      childOpts(this, undefined, {
+      childOpts(this, aliases.dataset, {
         provider: gcpProvider,
         dependsOn: [bigqueryApi],
       }),
@@ -118,7 +142,7 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
         ]),
         deletionProtection: false,
       },
-      childOpts(this, undefined, {
+      childOpts(this, aliases.table, {
         provider: gcpProvider,
         dependsOn: [this.dataset],
       }),
@@ -133,33 +157,33 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
           role: "roles/bigquery.dataViewer",
           member: pulumi.interpolate`serviceAccount:${args.analyticsReaderEmail}`,
         },
-        childOpts(this, undefined, {
+        childOpts(this, aliases.readerViewer, {
           provider: gcpProvider,
           dependsOn: [this.dataset],
         }),
       );
     }
 
-    const loaderSa = new gcp.serviceaccount.Account(
+    this.loaderSa = new gcp.serviceaccount.Account(
       `${name}-loader`,
       {
         accountId: args.loaderAccountId,
         displayName: "npm downloads → BigQuery loader",
         project: args.gcpProjectId,
       },
-      childOpts(this, undefined, { provider: gcpProvider }),
+      childOpts(this, aliases.loader, { provider: gcpProvider }),
     );
 
     new gcp.serviceaccount.IAMMember(
       `${name}-loader-deployer-actas`,
       {
-        serviceAccountId: loaderSa.name,
+        serviceAccountId: this.loaderSa.name,
         role: "roles/iam.serviceAccountUser",
         member: pulumi.interpolate`serviceAccount:${deployerSaEmail}`,
       },
-      childOpts(this, undefined, {
+      childOpts(this, aliases.loaderDeployerActas, {
         provider: gcpProvider,
-        dependsOn: [loaderSa],
+        dependsOn: [this.loaderSa],
       }),
     );
 
@@ -168,9 +192,9 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
       {
         project: args.gcpProjectId,
         role: "roles/bigquery.jobUser",
-        member: pulumi.interpolate`serviceAccount:${loaderSa.email}`,
+        member: pulumi.interpolate`serviceAccount:${this.loaderSa.email}`,
       },
-      childOpts(this, undefined, {
+      childOpts(this, aliases.loaderJobUser, {
         provider: gcpProvider,
         dependsOn: [bigqueryApi],
       }),
@@ -182,16 +206,22 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
         project: args.gcpProjectId,
         datasetId: this.dataset.datasetId,
         role: "roles/bigquery.dataEditor",
-        member: pulumi.interpolate`serviceAccount:${loaderSa.email}`,
+        member: pulumi.interpolate`serviceAccount:${this.loaderSa.email}`,
       },
-      childOpts(this, undefined, {
+      childOpts(this, aliases.loaderDataEditor, {
         provider: gcpProvider,
         dependsOn: [this.dataset],
       }),
     );
 
     const environmentVariables = pulumi
-      .all([args.gcpProjectId, datasetId, tableId, args.location, downloadsPeriod])
+      .all([
+        args.gcpProjectId,
+        datasetId,
+        tableId,
+        args.location,
+        downloadsPeriod,
+      ])
       .apply(([projectId, ds, table, location, period]) => ({
         GCP_PROJECT: projectId,
         BQ_DATASET: ds,
@@ -210,7 +240,7 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
       functionName,
       description: "Fetch npm daily download stats into BigQuery product_npm",
       entryPoint,
-      serviceAccountEmail: loaderSa.email,
+      serviceAccountEmail: this.loaderSa.email,
       environmentVariables,
       sourceArchive: args.sourceArchive,
       sourceObjectName,
@@ -220,16 +250,22 @@ export class NpmDownloadsEtl extends pulumi.ComponentResource {
       schedulerDescription: "Daily npm downloads ETL",
       deployerSaEmail,
       schedulerApi,
-      dependsOn: [this.table, loaderSa],
+      dependsOn: [this.table, this.loaderSa],
+      childAliases: aliases.etl,
     });
 
     this.functionUrl = etl.functionUrl;
     this.datasetId = this.dataset.datasetId;
+    this.tableId = this.table.tableId;
+    this.loaderSaEmail = this.loaderSa.email;
+    this.scheduleJobName = etl.scheduleJob.name;
 
     this.registerOutputs({
       datasetId: this.datasetId,
+      tableId: this.tableId,
       functionUrl: this.functionUrl,
-      scheduleJobName: etl.scheduleJob.name,
+      loaderSaEmail: this.loaderSaEmail,
+      scheduleJobName: this.scheduleJobName,
     });
   }
 }
