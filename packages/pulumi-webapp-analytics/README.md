@@ -1,5 +1,7 @@
 # @sargonpiraev/pulumi-webapp-analytics
 
+> **Prefer [`@sargonpiraev/pulumi-apps`](https://www.npmjs.com/package/@sargonpiraev/pulumi-apps)** (`WebappAnalytics`). This package remains published for existing pins; new stacks should import from `pulumi-apps`. Same `WEBAPP_ANALYTICS_TYPE` token.
+
 Pulumi **ComponentResource** for public web product analytics (`apps/webapp` / public `docapp`):
 
 - Google Search Console property (`@sargonpiraev/pulumi-gsc`)
@@ -9,6 +11,10 @@ Pulumi **ComponentResource** for public web product analytics (`apps/webapp` / p
 ## Install
 
 ```bash
+# preferred
+npm install @sargonpiraev/pulumi-apps
+
+# legacy (existing pins)
 npm install @sargonpiraev/pulumi-webapp-analytics
 ```
 

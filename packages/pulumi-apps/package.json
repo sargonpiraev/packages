@@ -1,0 +1,82 @@
+{
+  "name": "@sargonpiraev/pulumi-apps",
+  "version": "0.0.0",
+  "description": "Pulumi ComponentResources per Turborepo app type (webapp / extapp / mobapp) plus resource-triggered finops / npm ETL helpers",
+  "keywords": [
+    "pulumi",
+    "component",
+    "webapp",
+    "extapp",
+    "mobapp",
+    "analytics",
+    "finops",
+    "bigquery",
+    "infrastructure"
+  ],
+  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/pulumi-apps#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/shared/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargonpiraev/shared.git",
+    "directory": "packages/pulumi-apps"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com"
+  },
+  "type": "module",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.js"
+    },
+    "./webapp": {
+      "types": "./build/webapp/index.d.ts",
+      "import": "./build/webapp/index.js"
+    },
+    "./extapp": {
+      "types": "./build/extapp/index.d.ts",
+      "import": "./build/extapp/index.js"
+    },
+    "./mobapp": {
+      "types": "./build/mobapp/index.d.ts",
+      "import": "./build/mobapp/index.js"
+    },
+    "./finops": {
+      "types": "./build/finops/index.d.ts",
+      "import": "./build/finops/index.js"
+    }
+  },
+  "files": [
+    "build",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint ./src --ext .ts",
+    "test": "jest --passWithNoTests --coverage"
+  },
+  "dependencies": {
+    "@pulumi/gcp": "^9.0.0",
+    "@pulumi/pulumi": "^3.0.0",
+    "@sargonpiraev/pulumi-gsc": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
