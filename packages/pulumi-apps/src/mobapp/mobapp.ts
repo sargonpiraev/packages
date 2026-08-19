@@ -6,9 +6,11 @@ import { repoHasMobapp } from "../internal/repo-has-app.js";
 
 export { repoHasMobapp };
 
+/** Previous URN type — ComponentResource aliases only (stack continuity). */
+const MOBAPP_TYPE_LEGACY = "sargonpiraev:apps:MobappAnalytics" as const;
+
 /** URN type token — governance `test:pulumi` asserts this ComponentResource is registered. */
-export const MOBAPP_ANALYTICS_TYPE =
-  "sargonpiraev:apps:MobappAnalytics" as const;
+export const MOBAPP_TYPE = "sargonpiraev:apps:Mobapp" as const;
 
 export type MobappAscSecretRefs = {
   issuerIdSecret: string;
@@ -17,7 +19,7 @@ export type MobappAscSecretRefs = {
   vendorNumberSecret: string;
 };
 
-export type MobappAnalyticsArgs = {
+export type MobappArgs = {
   gcpProjectId: pulumi.Input<string>;
   location: pulumi.Input<string>;
   region: pulumi.Input<string>;
@@ -51,13 +53,13 @@ export type MobappAnalyticsArgs = {
 };
 
 /**
- * Product analytics for `apps/mobapp`:
+ * `apps/mobapp` product analytics:
  * BigQuery `product_appstore` dataset + tables + ASC Gen1 CF ETL + daily Scheduler.
  *
  * Play Store path is intentionally omitted for now.
  * Function source stays in the consuming stack — pass `sourceArchive`.
  */
-export class MobappAnalytics extends pulumi.ComponentResource {
+export class Mobapp extends pulumi.ComponentResource {
   public readonly dataset: gcp.bigquery.Dataset;
   public readonly salesTable: gcp.bigquery.Table;
   public readonly analyticsTable: gcp.bigquery.Table;
@@ -70,10 +72,17 @@ export class MobappAnalytics extends pulumi.ComponentResource {
 
   constructor(
     name: string,
-    args: MobappAnalyticsArgs,
+    args: MobappArgs,
     opts?: pulumi.ComponentResourceOptions,
   ) {
-    super(MOBAPP_ANALYTICS_TYPE, name, args, opts);
+    super(
+      MOBAPP_TYPE,
+      name,
+      args,
+      pulumi.mergeOptions(opts, {
+        aliases: [{ type: MOBAPP_TYPE_LEGACY }],
+      }),
+    );
 
     const adopt = args.adoptExisting === true;
     const functionName = args.functionName ?? "appstore-connect-etl";

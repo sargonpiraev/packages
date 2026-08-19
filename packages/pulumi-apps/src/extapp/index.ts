@@ -1,6 +1,6 @@
 export {
-  EXTAPP_ANALYTICS_TYPE,
-  ExtappAnalytics,
+  EXTAPP_TYPE,
+  Extapp,
   repoHasExtapp,
-  type ExtappAnalyticsArgs,
-} from "./extapp-analytics.js";
+  type ExtappArgs,
+} from "./extapp.js";

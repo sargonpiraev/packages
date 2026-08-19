@@ -1,7 +1,7 @@
 export {
-  MOBAPP_ANALYTICS_TYPE,
-  MobappAnalytics,
+  MOBAPP_TYPE,
+  Mobapp,
   repoHasMobapp,
-  type MobappAnalyticsArgs,
+  type MobappArgs,
   type MobappAscSecretRefs,
-} from "./mobapp-analytics.js";
+} from "./mobapp.js";

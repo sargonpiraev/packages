@@ -8,11 +8,14 @@ import { repoHasWebapp } from "../internal/repo-has-app.js";
 
 export { repoHasWebapp };
 
-/** URN type token — governance `test:pulumi` asserts this ComponentResource is registered. */
-export const WEBAPP_ANALYTICS_TYPE =
+/** Previous URN type — ComponentResource aliases only (stack continuity). */
+const WEBAPP_TYPE_LEGACY =
   "sargonpiraev:webapp-analytics:WebappAnalytics" as const;
 
-export type WebappAnalyticsChildAliases = {
+/** URN type token — governance `test:pulumi` asserts this ComponentResource is registered. */
+export const WEBAPP_TYPE = "sargonpiraev:apps:Webapp" as const;
+
+export type WebappChildAliases = {
   gcpProvider?: string;
   bigqueryApi?: string;
   bigqueryStorageApi?: string;
@@ -22,7 +25,7 @@ export type WebappAnalyticsChildAliases = {
   gscProperty?: string;
 };
 
-export type WebappAnalyticsArgs = {
+export type WebappArgs = {
   /** GCP project that hosts warehouse datasets (portfolio SSOT: sargonpiraev). */
   gcpProjectId: pulumi.Input<string>;
   datasetId: pulumi.Input<string>;
@@ -44,7 +47,7 @@ export type WebappAnalyticsArgs = {
   /**
    * Previous Pulumi names when children lived at stack root (preserves state on first component wrap).
    */
-  childAliases?: WebappAnalyticsChildAliases;
+  childAliases?: WebappChildAliases;
   /**
    * Optional GA4 measurement / property ids for future linking.
    * No first-class GA4→BQ resource exists in `@pulumi/gcp` yet — values are registered as outputs only.
@@ -55,14 +58,14 @@ export type WebappAnalyticsArgs = {
 };
 
 /**
- * Product analytics for `apps/webapp` / public `docapp`:
+ * `apps/webapp` / public `docapp` product analytics:
  * GSC property + BigQuery bulk-export dataset + IAM for Google's Search Console export SA.
  *
  * GA4→BQ native link is not declared until a Pulumi provider resource exists; optional
  * measurement/property ids are exposed as outputs for documentation / later wiring.
  * **No** custom Cloud Function for GSC/GA — native exports only.
  */
-export class WebappAnalytics extends pulumi.ComponentResource {
+export class Webapp extends pulumi.ComponentResource {
   public readonly gscProperty: GscProperty;
   public readonly dataset: gcp.bigquery.Dataset;
   public readonly gscSiteUrl: pulumi.Output<string>;
@@ -73,10 +76,17 @@ export class WebappAnalytics extends pulumi.ComponentResource {
 
   constructor(
     name: string,
-    args: WebappAnalyticsArgs,
+    args: WebappArgs,
     opts?: pulumi.ComponentResourceOptions,
   ) {
-    super(WEBAPP_ANALYTICS_TYPE, name, args, opts);
+    super(
+      WEBAPP_TYPE,
+      name,
+      args,
+      pulumi.mergeOptions(opts, {
+        aliases: [{ type: WEBAPP_TYPE_LEGACY }],
+      }),
+    );
 
     const adopt = args.adoptExisting === true;
     const aliases = args.childAliases ?? {};

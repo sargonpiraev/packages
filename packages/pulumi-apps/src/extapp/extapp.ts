@@ -6,11 +6,13 @@ import { repoHasExtapp } from "../internal/repo-has-app.js";
 
 export { repoHasExtapp };
 
-/** URN type token — governance `test:pulumi` asserts this ComponentResource is registered. */
-export const EXTAPP_ANALYTICS_TYPE =
-  "sargonpiraev:apps:ExtappAnalytics" as const;
+/** Previous URN type — ComponentResource aliases only (stack continuity). */
+const EXTAPP_TYPE_LEGACY = "sargonpiraev:apps:ExtappAnalytics" as const;
 
-export type ExtappAnalyticsArgs = {
+/** URN type token — governance `test:pulumi` asserts this ComponentResource is registered. */
+export const EXTAPP_TYPE = "sargonpiraev:apps:Extapp" as const;
+
+export type ExtappArgs = {
   gcpProjectId: pulumi.Input<string>;
   location: pulumi.Input<string>;
   region: pulumi.Input<string>;
@@ -56,13 +58,13 @@ const LISTING_TABLE_SCHEMA = JSON.stringify([
 ]);
 
 /**
- * Product analytics for `apps/extapp`:
+ * `apps/extapp` product analytics:
  * BigQuery `product_cws` dataset + listing table + Gen1 CF ETL + daily Scheduler.
  *
  * Function source stays in the consuming stack (meta `pulumi/dwhapp/functions/cws-listing`
  * or a project copy) — pass `sourceArchive`.
  */
-export class ExtappAnalytics extends pulumi.ComponentResource {
+export class Extapp extends pulumi.ComponentResource {
   public readonly dataset: gcp.bigquery.Dataset;
   public readonly listingTable: gcp.bigquery.Table;
   public readonly loaderSa: gcp.serviceaccount.Account;
@@ -73,10 +75,17 @@ export class ExtappAnalytics extends pulumi.ComponentResource {
 
   constructor(
     name: string,
-    args: ExtappAnalyticsArgs,
+    args: ExtappArgs,
     opts?: pulumi.ComponentResourceOptions,
   ) {
-    super(EXTAPP_ANALYTICS_TYPE, name, args, opts);
+    super(
+      EXTAPP_TYPE,
+      name,
+      args,
+      pulumi.mergeOptions(opts, {
+        aliases: [{ type: EXTAPP_TYPE_LEGACY }],
+      }),
+    );
 
     const adopt = args.adoptExisting === true;
     const functionName = args.functionName ?? "cws-listing-etl";

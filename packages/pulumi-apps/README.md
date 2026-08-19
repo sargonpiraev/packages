@@ -8,9 +8,9 @@ One package, multiple modules — not one npm package per app type.
 
 | Export | Type token | Role |
 | --- | --- | --- |
-| `WebappAnalytics` | `sargonpiraev:webapp-analytics:WebappAnalytics` | GSC property + BQ bulk-export dataset/IAM; optional GA4 ids as outputs. **No** custom CF (native GSC/GA→BQ). |
-| `ExtappAnalytics` | `sargonpiraev:apps:ExtappAnalytics` | CWS listing → BQ `product_cws` + Gen1 CF + Scheduler |
-| `MobappAnalytics` | `sargonpiraev:apps:MobappAnalytics` | ASC → BQ `product_appstore` + Gen1 CF + Scheduler (Play later) |
+| `Webapp` | `sargonpiraev:apps:Webapp` | GSC property + BQ bulk-export dataset/IAM; optional GA4 ids as outputs. **No** custom CF (native GSC/GA→BQ). |
+| `Extapp` | `sargonpiraev:apps:Extapp` | CWS listing → BQ `product_cws` + Gen1 CF + Scheduler |
+| `Mobapp` | `sargonpiraev:apps:Mobapp` | ASC → BQ `product_appstore` + Gen1 CF + Scheduler (Play later) |
 | `NpmDownloadsEtl` | `sargonpiraev:apps:NpmDownloadsEtl` | npm downloads → `product_npm` |
 | `VercelFinopsEtl` | `sargonpiraev:apps:VercelFinopsEtl` | Vercel FOCUS → `finops` |
 | `NeonFinopsEtl` | `sargonpiraev:apps:NeonFinopsEtl` | Neon consumption → `finops` |
@@ -29,20 +29,20 @@ npm install @sargonpiraev/pulumi-apps
 
 ```ts
 import {
-  WebappAnalytics,
-  WEBAPP_ANALYTICS_TYPE,
-  ExtappAnalytics,
-  EXTAPP_ANALYTICS_TYPE,
-  MobappAnalytics,
-  MOBAPP_ANALYTICS_TYPE,
+  Webapp,
+  WEBAPP_TYPE,
+  Extapp,
+  EXTAPP_TYPE,
+  Mobapp,
+  MOBAPP_TYPE,
 } from "@sargonpiraev/pulumi-apps";
 import * as pulumi from "@pulumi/pulumi";
 
 // webapp — native GSC/GA→BQ only
-new WebappAnalytics("webapp-analytics", { /* … */ });
+new Webapp("webapp", { /* … */ });
 
 // extapp — pass CF source from meta dwhapp (or project copy)
-new ExtappAnalytics("extapp-analytics", {
+new Extapp("extapp", {
   gcpProjectId: "sargonpiraev",
   location: "EU",
   region: "europe-west1",
@@ -57,9 +57,9 @@ new ExtappAnalytics("extapp-analytics", {
 });
 
 // Governance: test:pulumi asserts type tokens under mocks
-void WEBAPP_ANALYTICS_TYPE;
-void EXTAPP_ANALYTICS_TYPE;
-void MOBAPP_ANALYTICS_TYPE;
+void WEBAPP_TYPE;
+void EXTAPP_TYPE;
+void MOBAPP_TYPE;
 ```
 
 CF **source archives stay in the consuming stack** (meta `pulumi/dwhapp/functions/<name>`). Components wire SA/IAM/BQ/CF/Scheduler; they do not ship function source.
@@ -68,21 +68,37 @@ CF **source archives stay in the consuming stack** (meta `pulumi/dwhapp/function
 
 | Component | Status |
 | --- | --- |
-| `WebappAnalytics` | **Fully wired** — successor of `@sargonpiraev/pulumi-webapp-analytics` (same `WEBAPP_ANALYTICS_TYPE`) |
-| `ExtappAnalytics` | **Wired** — dataset + listing table + CF + Scheduler |
-| `MobappAnalytics` | **Wired** — dataset + core tables + secrets IAM + CF + Scheduler |
+| `Webapp` | **Fully wired** — successor of `@sargonpiraev/pulumi-webapp-analytics` |
+| `Extapp` | **Wired** — dataset + listing table + CF + Scheduler |
+| `Mobapp` | **Wired** — dataset + core tables + secrets IAM + CF + Scheduler |
 | `NpmDownloadsEtl` | **Wired** — dataset + table + CF + Scheduler |
 | `VercelFinopsEtl` / `NeonFinopsEtl` | **Wired** — tables + secrets IAM + CF + Scheduler (finops dataset must already exist) |
 
-## Migration from `@sargonpiraev/pulumi-webapp-analytics`
+## Migration notes
 
-Same type token and args shape. Change the package import:
+### From `WebappAnalytics` / `ExtappAnalytics` / `MobappAnalytics`
+
+Class names and type tokens are short app-type names:
+
+| Old | New | New type token |
+| --- | --- | --- |
+| `WebappAnalytics` | `Webapp` | `sargonpiraev:apps:Webapp` |
+| `ExtappAnalytics` | `Extapp` | `sargonpiraev:apps:Extapp` |
+| `MobappAnalytics` | `Mobapp` | `sargonpiraev:apps:Mobapp` |
+
+Type constants: `WEBAPP_TYPE` / `EXTAPP_TYPE` / `MOBAPP_TYPE` (was `*_ANALYTICS_TYPE`).
+
+Parent ComponentResources declare **aliases** to the previous type tokens so existing stacks (anidex / site / pddx) do not replace/create the parent URN. Child resources stay on existing `childAliases` patterns.
+
+### From `@sargonpiraev/pulumi-webapp-analytics`
+
+Prefer this package:
 
 ```ts
 // before
 import { WebappAnalytics, WEBAPP_ANALYTICS_TYPE } from "@sargonpiraev/pulumi-webapp-analytics";
 // after
-import { WebappAnalytics, WEBAPP_ANALYTICS_TYPE } from "@sargonpiraev/pulumi-apps";
+import { Webapp, WEBAPP_TYPE } from "@sargonpiraev/pulumi-apps";
 ```
 
 ## Home

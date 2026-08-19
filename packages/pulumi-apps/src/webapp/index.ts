@@ -1,8 +1,8 @@
 export {
-  WEBAPP_ANALYTICS_TYPE,
-  WebappAnalytics,
+  WEBAPP_TYPE,
+  Webapp,
   assertRepoHasWebapp,
   repoHasWebapp,
-  type WebappAnalyticsArgs,
-  type WebappAnalyticsChildAliases,
-} from "./webapp-analytics.js";
+  type WebappArgs,
+  type WebappChildAliases,
+} from "./webapp.js";

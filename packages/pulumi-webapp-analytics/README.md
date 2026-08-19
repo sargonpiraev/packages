@@ -1,6 +1,6 @@
 # @sargonpiraev/pulumi-webapp-analytics
 
-> **Prefer [`@sargonpiraev/pulumi-apps`](https://www.npmjs.com/package/@sargonpiraev/pulumi-apps)** (`WebappAnalytics`). This package remains published for existing pins; new stacks should import from `pulumi-apps`. Same `WEBAPP_ANALYTICS_TYPE` token.
+> **Prefer [`@sargonpiraev/pulumi-apps`](https://www.npmjs.com/package/@sargonpiraev/pulumi-apps)** (`Webapp` / `WEBAPP_TYPE` = `sargonpiraev:apps:Webapp`). This package remains published for existing pins; new stacks should import from `pulumi-apps`.
 
 Pulumi **ComponentResource** for public web product analytics (`apps/webapp` / public `docapp`):
 
@@ -18,7 +18,7 @@ npm install @sargonpiraev/pulumi-apps
 npm install @sargonpiraev/pulumi-webapp-analytics
 ```
 
-## Usage
+## Usage (legacy)
 
 ```ts
 import {
@@ -44,14 +44,15 @@ const analytics = new WebappAnalytics("webapp-analytics", {
   datasetImportId: "projects/sargonpiraev/datasets/searchconsole_anidex",
 });
 
-// Governance: test:pulumi asserts WEBAPP_ANALYTICS_TYPE is registered under mocks.
 void WEBAPP_ANALYTICS_TYPE;
 void analytics.datasetId;
 ```
 
-## Type token
+## Type token (legacy)
 
 `sargonpiraev:webapp-analytics:WebappAnalytics` (`WEBAPP_ANALYTICS_TYPE`)
+
+Prefer `@sargonpiraev/pulumi-apps` `Webapp` (`sargonpiraev:apps:Webapp`) — that class aliases this legacy type for stack continuity.
 
 ## Home
 

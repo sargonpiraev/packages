@@ -1,25 +1,25 @@
 /** Type tokens for project `test:pulumi` presence asserts. */
 export {
-  WEBAPP_ANALYTICS_TYPE,
-  WebappAnalytics,
+  WEBAPP_TYPE,
+  Webapp,
   assertRepoHasWebapp,
   repoHasWebapp,
-  type WebappAnalyticsArgs,
-  type WebappAnalyticsChildAliases,
+  type WebappArgs,
+  type WebappChildAliases,
 } from "./webapp/index.js";
 
 export {
-  EXTAPP_ANALYTICS_TYPE,
-  ExtappAnalytics,
+  EXTAPP_TYPE,
+  Extapp,
   repoHasExtapp,
-  type ExtappAnalyticsArgs,
+  type ExtappArgs,
 } from "./extapp/index.js";
 
 export {
-  MOBAPP_ANALYTICS_TYPE,
-  MobappAnalytics,
+  MOBAPP_TYPE,
+  Mobapp,
   repoHasMobapp,
-  type MobappAnalyticsArgs,
+  type MobappArgs,
   type MobappAscSecretRefs,
 } from "./mobapp/index.js";
 
