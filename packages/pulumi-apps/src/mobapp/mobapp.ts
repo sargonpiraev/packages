@@ -1,7 +1,10 @@
 import * as gcp from "@pulumi/gcp";
 import * as pulumi from "@pulumi/pulumi";
 import { childOpts } from "../internal/child-opts.js";
-import { createHttpFunctionEtl } from "../internal/http-function-etl.js";
+import {
+  createHttpFunctionEtl,
+  type HttpFunctionEtlChildAliases,
+} from "../internal/http-function-etl.js";
 import { repoHasMobapp } from "../internal/repo-has-app.js";
 
 export { repoHasMobapp };
@@ -50,6 +53,8 @@ export type MobappArgs = {
   analyticsReaderEmail?: pulumi.Input<string>;
   adoptExisting?: boolean;
   datasetImportId?: string;
+  /** Preserve Gen1 CF/Scheduler child names when adopting from a prior stack. */
+  etlChildAliases?: HttpFunctionEtlChildAliases;
 };
 
 /**
@@ -167,19 +172,37 @@ export class Mobapp extends pulumi.ComponentResource {
       }),
     );
 
+    const tableAdoptOpts = adopt
+      ? { protect: true, ignoreChanges: ["schema"] as string[] }
+      : {};
+
     this.salesTable = new gcp.bigquery.Table(
       `${name}-sales-table`,
       {
         project: args.gcpProjectId,
         datasetId: this.dataset.datasetId,
         tableId: "sales_summary_daily",
-        description: "ASC Sales and Trends SUMMARY / DAILY",
+        description: "ASC Sales and Trends SUMMARY / DAILY (units + proceeds)",
         timePartitioning: { type: "DAY", field: "report_date" },
         schema: JSON.stringify([
           { name: "report_date", type: "DATE", mode: "REQUIRED" },
+          { name: "begin_date", type: "DATE", mode: "NULLABLE" },
+          { name: "end_date", type: "DATE", mode: "NULLABLE" },
+          { name: "sku", type: "STRING", mode: "NULLABLE" },
+          { name: "title", type: "STRING", mode: "NULLABLE" },
+          { name: "apple_identifier", type: "STRING", mode: "NULLABLE" },
+          { name: "product_type_identifier", type: "STRING", mode: "NULLABLE" },
           { name: "units", type: "INTEGER", mode: "NULLABLE" },
           { name: "developer_proceeds", type: "FLOAT", mode: "NULLABLE" },
+          { name: "customer_price", type: "FLOAT", mode: "NULLABLE" },
+          { name: "customer_currency", type: "STRING", mode: "NULLABLE" },
+          { name: "currency_of_proceeds", type: "STRING", mode: "NULLABLE" },
           { name: "country_code", type: "STRING", mode: "NULLABLE" },
+          { name: "device", type: "STRING", mode: "NULLABLE" },
+          { name: "version", type: "STRING", mode: "NULLABLE" },
+          { name: "subscription", type: "STRING", mode: "NULLABLE" },
+          { name: "period", type: "STRING", mode: "NULLABLE" },
+          { name: "category", type: "STRING", mode: "NULLABLE" },
           { name: "raw", type: "STRING", mode: "NULLABLE" },
           { name: "loaded_at", type: "TIMESTAMP", mode: "NULLABLE" },
         ]),
@@ -188,6 +211,7 @@ export class Mobapp extends pulumi.ComponentResource {
       childOpts(this, undefined, {
         provider: gcpProvider,
         dependsOn: [this.dataset],
+        ...tableAdoptOpts,
       }),
     );
 
@@ -197,14 +221,23 @@ export class Mobapp extends pulumi.ComponentResource {
         project: args.gcpProjectId,
         datasetId: this.dataset.datasetId,
         tableId: "analytics_daily",
-        description: "ASC Analytics Reports (DAILY)",
+        description:
+          "ASC Analytics Reports (DAILY) — engagement impressions/page views, downloads, sessions, installs",
         timePartitioning: { type: "DAY", field: "event_date" },
         clusterings: ["report_name", "metric_key"],
         schema: JSON.stringify([
           { name: "report_name", type: "STRING", mode: "REQUIRED" },
+          { name: "report_category", type: "STRING", mode: "NULLABLE" },
+          { name: "processing_date", type: "DATE", mode: "NULLABLE" },
+          { name: "granularity", type: "STRING", mode: "NULLABLE" },
           { name: "event_date", type: "DATE", mode: "REQUIRED" },
+          { name: "app_apple_identifier", type: "STRING", mode: "NULLABLE" },
+          { name: "app_name", type: "STRING", mode: "NULLABLE" },
           { name: "metric_key", type: "STRING", mode: "NULLABLE" },
           { name: "counts", type: "INTEGER", mode: "NULLABLE" },
+          { name: "unique_counts", type: "INTEGER", mode: "NULLABLE" },
+          { name: "dimensions_json", type: "STRING", mode: "NULLABLE" },
+          { name: "raw_json", type: "STRING", mode: "NULLABLE" },
           { name: "loaded_at", type: "TIMESTAMP", mode: "NULLABLE" },
         ]),
         deletionProtection: false,
@@ -212,6 +245,7 @@ export class Mobapp extends pulumi.ComponentResource {
       childOpts(this, undefined, {
         provider: gcpProvider,
         dependsOn: [this.dataset],
+        ...tableAdoptOpts,
       }),
     );
 
@@ -225,6 +259,20 @@ export class Mobapp extends pulumi.ComponentResource {
         schema: JSON.stringify([
           { name: "run_at", type: "TIMESTAMP", mode: "REQUIRED" },
           { name: "app_id", type: "STRING", mode: "NULLABLE" },
+          { name: "bundle_id", type: "STRING", mode: "NULLABLE" },
+          { name: "sales_rows", type: "INTEGER", mode: "NULLABLE" },
+          { name: "analytics_rows", type: "INTEGER", mode: "NULLABLE" },
+          {
+            name: "available_analytics_reports",
+            type: "STRING",
+            mode: "NULLABLE",
+          },
+          {
+            name: "missing_analytics_reports",
+            type: "STRING",
+            mode: "NULLABLE",
+          },
+          { name: "gaps_json", type: "STRING", mode: "NULLABLE" },
           { name: "status", type: "STRING", mode: "NULLABLE" },
           { name: "error", type: "STRING", mode: "NULLABLE" },
         ]),
@@ -233,6 +281,7 @@ export class Mobapp extends pulumi.ComponentResource {
       childOpts(this, undefined, {
         provider: gcpProvider,
         dependsOn: [this.dataset],
+        ...tableAdoptOpts,
       }),
     );
 
@@ -453,6 +502,7 @@ export class Mobapp extends pulumi.ComponentResource {
         secretManagerApi,
       ],
       ignoreSecretEnvDiff: true,
+      childAliases: args.etlChildAliases,
     });
 
     this.functionUrl = etl.functionUrl;
