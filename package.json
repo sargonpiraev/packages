@@ -13,7 +13,7 @@
     "generate": "turbo run generate",
     "lint": "turbo run lint",
     "prepare": "lefthook install",
-    "release": "multi-semantic-release",
+    "release": "multi-semantic-release --ignore-packages=packages/pulumi-ga4/**",
     "test": "turbo run test",
     "test:alint": "alint check",
     "test:check-types": "npm run check-types",
