@@ -39,7 +39,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: sargonpiraev/shared/.github/actions/setup-node-npm-ci@main
-      - run: npm run build
+      - name: Build
+        env:
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+        run: npm run build
 
   test:
     runs-on: ubuntu-latest
