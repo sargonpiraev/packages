@@ -142,6 +142,7 @@ describe('createProjectConfigs', () => {
     assert.ok(packageScripts.required.includes('prepare'))
     assert.ok(packageScripts.required.includes('test:eslint'))
     assert.ok(packageScripts.required.includes('test:alint'))
+    assert.ok(packageScripts.required.includes('test:pulumi'))
     assert.equal(
       (
         packageScripts.properties as {
@@ -163,6 +164,7 @@ describe('createProjectConfigs', () => {
     ).properties.targets
     assert.ok(projectTargets.required.includes('test:eslint'))
     assert.ok(projectTargets.required.includes('test:alint'))
+    assert.ok(projectTargets.required.includes('test:pulumi'))
     assert.equal(projectTargets.properties['test:lint'], false)
     assert.ok(!('appPlaywrightWebapp' in schemas))
     assert.ok(!('appPlaywrightExtapp' in schemas))

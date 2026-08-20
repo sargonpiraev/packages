@@ -1,0 +1,61 @@
+{
+  "name": "@sargonpiraev/pulumi-ga4",
+  "version": "0.0.0",
+  "description": "Pulumi provider for Google Analytics 4 properties and BigQuery export links",
+  "keywords": [
+    "pulumi",
+    "provider",
+    "ga4",
+    "google-analytics",
+    "bigquery",
+    "infrastructure"
+  ],
+  "homepage": "https://github.com/sargonpiraev/shared/tree/main/packages/pulumi-ga4#readme",
+  "bugs": {
+    "url": "https://github.com/sargonpiraev/shared/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sargonpiraev/shared.git",
+    "directory": "packages/pulumi-ga4"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Sargon Piraev",
+    "email": "sargonpiraev@gmail.com"
+  },
+  "type": "module",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "bin": {
+    "pulumi-resource-ga4": "./bin/pulumi-resource-ga4.js"
+  },
+  "files": [
+    "build",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint ./src --ext .ts",
+    "test": "jest --passWithNoTests --coverage"
+  },
+  "dependencies": {
+    "@googleapis/analyticsadmin": "^18.0.1",
+    "@pulumi/pulumi": "^3.0.0",
+    "google-auth-library": "^10.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

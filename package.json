@@ -21,7 +21,8 @@
     "test:eslint": "npm run build -w @sargonpiraev/eslint-config && eslint --config ./eslint.config.mjs --no-config-lookup --no-warn-ignored --no-error-on-unmatched-pattern \"project.json\" \"package.json\" \".cursor/worktrees.json\" \"tsconfig.json\" \".releaserc.json\" \"packages/*/.releaserc.json\" \"playwright.config.ts\" \"apps/*/playwright.config.ts\" \".gitignore\" && npm run lint",
     "test:spec": "node -e \"console.log('noop test:spec — N/A'); process.exit(0)\"",
     "test:unit": "turbo run test",
-    "test:visual": "node -e \"console.log('noop test:visual — N/A'); process.exit(0)\""
+    "test:visual": "node -e \"console.log('noop test:visual — N/A'); process.exit(0)\"",
+    "test:pulumi": "node -e \"console.log('noop test:pulumi'); process.exit(0)\""
   },
   "devDependencies": {
     "@asamarts/alint": "^0.14.2",

@@ -5,4 +5,5 @@ export {
   repoHasWebapp,
   type WebappArgs,
   type WebappChildAliases,
+  type WebappVercelArgs,
 } from "./webapp.js";

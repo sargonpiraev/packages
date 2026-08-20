@@ -66,6 +66,8 @@
   "dependencies": {
     "@pulumi/gcp": "^9.0.0",
     "@pulumi/pulumi": "^3.0.0",
+    "@pulumiverse/vercel": "^1.15.0",
+    "@sargonpiraev/pulumi-ga4": "^0.0.0",
     "@sargonpiraev/pulumi-gsc": "^0.3.0"
   },
   "devDependencies": {

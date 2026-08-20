@@ -4,7 +4,7 @@ Shared ESLint flat-config presets + JSON schemas for project inventory gates:
 
 | Gate | Files |
 |---|---|
-| Nx / scripts | `project.json`, `package.json` (`test:eslint` required, `test:lint` forbidden; `test:alint` required; `build`; `test:format` = `prettier --check`; `prepare` = `lefthook install`; `engines.node` ≥22) |
+| Nx / scripts | `project.json`, `package.json` (`test:eslint` required, `test:lint` forbidden; `test:alint` required; `test:pulumi` required — mocks or noop; `build`; `test:format` = `prettier --check`; `prepare` = `lefthook install`; `engines.node` ≥22) |
 | Worktrees | `.cursor/worktrees.json` |
 | Workflow / release | `.github/workflows/on-push-main.yml` (calls `sargonpiraev/shared`; no `NPM_TOKEN`) |
 | Playwright | `playwright.config.ts` / `apps/{webapp,docapp,extapp}/playwright.config.ts` via `project-harness/playwright-config` (eval projects + suite specs) |

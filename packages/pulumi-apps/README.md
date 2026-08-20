@@ -8,8 +8,8 @@ One package, multiple modules — not one npm package per app type.
 
 | Export | Type token | Role |
 | --- | --- | --- |
-| `Webapp` | `sargonpiraev:apps:Webapp` | GSC property + BQ bulk-export dataset/IAM; optional GA4 property + BigQuery link via `@sargonpiraev/pulumi-ga4`. **No** custom CF (native GSC/GA→BQ). |
-| `Extapp` | `sargonpiraev:apps:Extapp` | CWS listing → BQ `product_cws` + Gen1 CF + Scheduler |
+| `Webapp` | `sargonpiraev:apps:Webapp` | Infra cluster for `apps/webapp`: **Vercel project** + GSC + **created** GA4 (account listed from SA; web stream + BQ link). Env = root API keys only. |
+| `Extapp` | `sargonpiraev:apps:Extapp` | CWS listing → BQ `product_cws` + Gen1 CF + Scheduler. **`cwsItemId` / `cwsItemSlug` are required in code** (not env); empty id fails with [Developer Dashboard](https://chrome.google.com/webstore/devconsole) URL. API cannot create items. |
 | `Mobapp` | `sargonpiraev:apps:Mobapp` | ASC → BQ `product_appstore` + Gen1 CF + Scheduler (Play later) |
 | `NpmDownloadsEtl` | `sargonpiraev:apps:NpmDownloadsEtl` | npm downloads → `product_npm` |
 | `VercelFinopsEtl` | `sargonpiraev:apps:VercelFinopsEtl` | Vercel FOCUS → `finops` |
@@ -38,7 +38,7 @@ import {
 } from "@sargonpiraev/pulumi-apps";
 import * as pulumi from "@pulumi/pulumi";
 
-// webapp — native GSC/GA→BQ only
+// webapp — Vercel + native GSC/GA→BQ
 new Webapp("webapp", { /* … */ });
 
 // extapp — pass CF source from meta dwhapp (or project copy)
@@ -47,7 +47,7 @@ new Extapp("extapp", {
   location: "EU",
   region: "europe-west1",
   datasetId: "product_cws",
-  cwsItemId: "…",
+  cwsItemId: "…", // from Developer Dashboard — not env; empty throws
   cwsItemSlug: "modreq",
   productLabel: "modreq",
   loaderAccountId: "cws-etl-runner",

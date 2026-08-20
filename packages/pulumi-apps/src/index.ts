@@ -6,12 +6,17 @@ export {
   repoHasWebapp,
   type WebappArgs,
   type WebappChildAliases,
+  type WebappVercelArgs,
 } from "./webapp/index.js";
 
 export {
   EXTAPP_TYPE,
   Extapp,
   repoHasExtapp,
+  CWS_DEV_CONSOLE_URL,
+  cwsPublicListingUrl,
+  requireCwsItemId,
+  requireCwsItemSlug,
   type ExtappArgs,
 } from "./extapp/index.js";
 
@@ -41,3 +46,5 @@ export {
 export {
   repoHasApp,
 } from "./internal/repo-has-app.js";
+
+export { gcpProjectIdFromServiceAccountKeyB64 } from "./internal/sa-key.js";

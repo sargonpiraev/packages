@@ -102,6 +102,13 @@
       "options": {
         "cwd": "shared"
       }
+    },
+    "test:pulumi": {
+      "cache": false,
+      "command": "npm run test:pulumi",
+      "options": {
+        "cwd": "shared"
+      }
     }
   }
 }

@@ -3,8 +3,20 @@ import * as pulumi from "@pulumi/pulumi";
 import { childOpts } from "../internal/child-opts.js";
 import { createHttpFunctionEtl } from "../internal/http-function-etl.js";
 import { repoHasExtapp } from "../internal/repo-has-app.js";
+import {
+  CWS_DEV_CONSOLE_URL,
+  cwsPublicListingUrl,
+  requireCwsItemId,
+  requireCwsItemSlug,
+} from "./cws-item.js";
 
 export { repoHasExtapp };
+export {
+  CWS_DEV_CONSOLE_URL,
+  cwsPublicListingUrl,
+  requireCwsItemId,
+  requireCwsItemSlug,
+} from "./cws-item.js";
 
 /** Previous URN type — ComponentResource aliases only (stack continuity). */
 const EXTAPP_TYPE_LEGACY = "sargonpiraev:apps:ExtappAnalytics" as const;
@@ -18,9 +30,12 @@ export type ExtappArgs = {
   region: pulumi.Input<string>;
   /** Usually `product_cws`. */
   datasetId: pulumi.Input<string>;
-  /** Chrome Web Store item id (e.g. modreq). */
-  cwsItemId: pulumi.Input<string>;
-  cwsItemSlug: pulumi.Input<string>;
+  /**
+   * Chrome Web Store item id — stack code constant, not env.
+   * Create the item in the Developer Dashboard first (API cannot create items).
+   */
+  cwsItemId: string;
+  cwsItemSlug: string;
   /** Product label for dataset/tables (lowercase slug). */
   productLabel: string;
   /** Loader SA account id (6–30 chars). */
@@ -61,6 +76,10 @@ const LISTING_TABLE_SCHEMA = JSON.stringify([
  * `apps/extapp` product analytics:
  * BigQuery `product_cws` dataset + listing table + Gen1 CF ETL + daily Scheduler.
  *
+ * `cwsItemId` / `cwsItemSlug` must be non-empty strings in stack code (not env).
+ * Empty id fails before any listing ETL is created — create the item in
+ * Chrome Web Store Developer Dashboard first (API cannot create items).
+ *
  * Function source stays in the consuming stack (meta `pulumi/dwhapp/functions/cws-listing`
  * or a project copy) — pass `sourceArchive`.
  */
@@ -72,12 +91,17 @@ export class Extapp extends pulumi.ComponentResource {
   public readonly scheduleJobName: pulumi.Output<string>;
   public readonly datasetId: pulumi.Output<string>;
   public readonly cwsItemId: pulumi.Output<string>;
+  public readonly cwsDevConsoleUrl: pulumi.Output<string>;
+  public readonly cwsListingUrl: pulumi.Output<string>;
 
   constructor(
     name: string,
     args: ExtappArgs,
     opts?: pulumi.ComponentResourceOptions,
   ) {
+    const cwsItemId = requireCwsItemId(args.cwsItemId);
+    const cwsItemSlug = requireCwsItemSlug(args.cwsItemSlug);
+
     super(
       EXTAPP_TYPE,
       name,
@@ -232,8 +256,8 @@ export class Extapp extends pulumi.ComponentResource {
         args.gcpProjectId,
         args.datasetId,
         args.location,
-        args.cwsItemId,
-        args.cwsItemSlug,
+        cwsItemId,
+        cwsItemSlug,
       ])
       .apply(([projectId, datasetId, location, itemId, itemSlug]) => ({
         GOOGLE_CLOUD_PROJECT: projectId,
@@ -272,13 +296,19 @@ export class Extapp extends pulumi.ComponentResource {
     this.functionUrl = etl.functionUrl;
     this.scheduleJobName = etl.scheduleJob.name;
     this.datasetId = this.dataset.datasetId;
-    this.cwsItemId = pulumi.output(args.cwsItemId);
+    this.cwsItemId = pulumi.output(cwsItemId);
+    this.cwsDevConsoleUrl = pulumi.output(CWS_DEV_CONSOLE_URL);
+    this.cwsListingUrl = pulumi.output(
+      cwsPublicListingUrl(cwsItemSlug, cwsItemId),
+    );
 
     this.registerOutputs({
       datasetId: this.datasetId,
       functionUrl: this.functionUrl,
       scheduleJobName: this.scheduleJobName,
       cwsItemId: this.cwsItemId,
+      cwsDevConsoleUrl: this.cwsDevConsoleUrl,
+      cwsListingUrl: this.cwsListingUrl,
       loaderSaEmail: this.loaderSa.email,
     });
   }
