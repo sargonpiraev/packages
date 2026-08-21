@@ -6,7 +6,7 @@
 #   files: .alint.yml, .nvmrc, .npmrc, package.json, package-lock.json, lefthook.yml,
 #          project.json, AGENTS.md, commitlint.config.cjs, eslint.config.*,
 #          prettier.config.mjs, tsconfig.json
-#   dirs:  apps/, packages/, .cursor/, .github/
+#   dirs:  apps/, packages/, pulumi/, .cursor/, .github/
 # .npmrc = copy of ci/npmrc (engine-strict + fund=false); no auth tokens.
 # .nvmrc = presence (major pin). engines.node = ESLint content (floor >=22).
 # .env.example stays on the ESLint env harness when runtime env apps exist.
@@ -78,6 +78,9 @@ rules:
         root_only: true
       - kind: dir_exists
         paths: .github
+        root_only: true
+      - kind: dir_exists
+        paths: pulumi
         root_only: true
 
   # Turborepo shape: when turbo.json is present → turbo.json + apps/ + packages/

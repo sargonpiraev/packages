@@ -13,6 +13,8 @@
     "generate": "turbo run generate",
     "lint": "turbo run lint",
     "prepare": "lefthook install",
+    "pulumi:preview": "npm --prefix pulumi run preview",
+    "pulumi:up": "npm --prefix pulumi run up",
     "release": "multi-semantic-release",
     "test": "turbo run test",
     "test:alint": "alint check",
@@ -22,7 +24,7 @@
     "test:spec": "node -e \"console.log('noop test:spec — N/A'); process.exit(0)\"",
     "test:unit": "turbo run test",
     "test:visual": "node -e \"console.log('noop test:visual — N/A'); process.exit(0)\"",
-    "test:pulumi": "node -e \"console.log('noop test:pulumi'); process.exit(0)\""
+    "test:pulumi": "npm ci --prefix pulumi && npm --prefix pulumi run test:pulumi"
   },
   "devDependencies": {
     "@asamarts/alint": "^0.14.2",

@@ -1,0 +1,8 @@
+node_modules/
+.pulumi/
+Pulumi.*.yaml
+!Pulumi.yaml
+.env
+.env.*
+
+!.env.example
