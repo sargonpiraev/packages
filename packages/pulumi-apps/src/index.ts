@@ -7,7 +7,7 @@ export {
   type WebappArgs,
   type WebappChildAliases,
   type WebappVercelArgs,
-} from "./webapp/index.js";
+} from './webapp/index.js'
 
 export {
   EXTAPP_TYPE,
@@ -18,7 +18,7 @@ export {
   requireCwsItemId,
   requireCwsItemSlug,
   type ExtappArgs,
-} from "./extapp/index.js";
+} from './extapp/index.js'
 
 export {
   MOBAPP_TYPE,
@@ -26,7 +26,7 @@ export {
   repoHasMobapp,
   type MobappArgs,
   type MobappAscSecretRefs,
-} from "./mobapp/index.js";
+} from './mobapp/index.js'
 
 export {
   NPM_DOWNLOADS_ETL_TYPE,
@@ -41,10 +41,10 @@ export {
   NeonFinopsEtl,
   type NeonFinopsEtlArgs,
   type NeonFinopsEtlChildAliases,
-} from "./finops/index.js";
+} from './finops/index.js'
 
-export {
-  repoHasApp,
-} from "./internal/repo-has-app.js";
+export { repoHasApp } from './internal/repo-has-app.js'
 
-export { gcpProjectIdFromServiceAccountKeyB64 } from "./internal/sa-key.js";
+export { gcpProjectIdFromServiceAccountKeyB64 } from './internal/sa-key.js'
+
+export { assertIndexInstantiatesAppClusters } from './internal/assert-index-clusters.js'
