@@ -317,7 +317,7 @@ export class Webapp extends pulumi.ComponentResource {
         ...(adopt && importGa4 ? { protect: true } : {}),
       }),
     );
-    this.ga4PropertyId = this.ga4Property.propertyId;
+    this.ga4PropertyId = this.ga4Property.id;
     this.ga4MeasurementId = pulumi
       .all([this.ga4Property.measurementId, args.ga4MeasurementId ?? ""])
       .apply(([resolved, hint]) => resolved || hint || "");
@@ -326,7 +326,7 @@ export class Webapp extends pulumi.ComponentResource {
       this.ga4BigQueryLink = new Ga4BigQueryLink(
         `${name}-ga4-bq-link`,
         {
-          propertyId: this.ga4Property.propertyId,
+          propertyId: this.ga4Property.id,
           gcpProjectId,
           datasetLocation: args.location,
           serviceAccountKeyB64: ga4Key,

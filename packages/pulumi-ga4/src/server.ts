@@ -7,6 +7,7 @@ import type {
   DiffResult,
 } from "@pulumi/pulumi/provider/provider";
 import { pickSingleGa4AccountId } from "./account.js";
+import { listedBigQueryLinks } from "./listed-bigquery-links.js";
 
 const require = createRequire(import.meta.url);
 
@@ -107,6 +108,9 @@ function resourceType(urn: string): string {
 }
 
 function normalizePropertyId(raw: string): string {
+  if (raw == null || raw === "") {
+    throw new Error("GA4 property id is missing (got empty/undefined)");
+  }
   const trimmed = raw.trim();
   return trimmed.startsWith("properties/")
     ? trimmed.slice("properties/".length)
@@ -131,7 +135,10 @@ function buildAnalyticsAdmin(serviceAccountKeyB64: string) {
   const auth = new JWT({
     email: keyJson.client_email,
     key: keyJson.private_key,
-    scopes: ["https://www.googleapis.com/auth/analytics.edit"],
+    scopes: [
+      "https://www.googleapis.com/auth/analytics.edit",
+      "https://www.googleapis.com/auth/cloud-platform",
+    ],
   });
   // BigQuery links live on v1alpha only (not in v1beta).
   return analyticsadmin({ version: "v1alpha", auth });
@@ -287,11 +294,15 @@ const provider: Provider = {
       const wantedProject = projectResourceName(gcpProjectId);
 
       const listed = await admin.properties.bigQueryLinks.list({ parent });
-      const existing = (listed.data.bigQueryLinks ?? []).find(
-        (link: { project?: string | null; name?: string | null }) =>
-          projectMatches(link.project, wantedProject) ||
-          projectMatches(link.project, gcpProjectId),
-      );
+      const links = listedBigQueryLinks(listed.data);
+      const existing =
+        links.find(
+          (link) =>
+            projectMatches(link.project, wantedProject) ||
+            projectMatches(link.project, gcpProjectId),
+        ) ??
+        // One BQ link per property; API returns project *number* while we pass project *id*.
+        (links.length === 1 ? links[0] : undefined);
 
       // Idempotent: reuse an existing property→project link (console or prior apply).
       if (existing?.name) {
