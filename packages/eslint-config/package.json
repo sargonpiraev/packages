@@ -51,7 +51,7 @@
     "build": "tsc -p tsconfig.json && mkdir -p build/schemas && cp src/schemas/*.json build/schemas/",
     "check-types": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint ./src --ext .ts",
-    "test": "npm run build && tsc -p tsconfig.test.json && node --test build/__tests__/create-project-configs.test.js"
+    "test": "npm run build && tsc -p tsconfig.test.json && node --test build/__tests__/*.test.js"
   },
   "dependencies": {
     "jiti": "^2.7.0"

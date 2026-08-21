@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Project/shared Nx project.json",
-  "description": "Required test targets for project/shared project.json. Checks use the test:* namespace; build is separate. Use test:eslint (never test:lint). test:alint is required. Playwright lane targets test:functional / test:seo / test:analytics / test:cwv are optional in schema (declare when the project has webapp/docapp/extapp narrow-integration harness; inventory requires test:cwv script when webapp/docapp or flat-root PW exists). test:pulumi is always required (mocks or noop). Orchestration targets such as git:status are optional (not a governance gate). Shipped by @sargonpiraev/eslint-config.",
+  "description": "Required test targets for project/shared project.json. Checks use the test:* namespace; build is separate. Use test:eslint (never test:lint). test:alint is required. Playwright lane targets test:functional / test:seo / test:analytics / test:cwv are optional in schema (declare when the project has webapp/docapp/extapp narrow-integration harness; inventory requires test:cwv script when webapp/docapp or flat-root PW exists). test:pulumi is always required (index-clusters + mocks; never noop). Orchestration targets such as git:status are optional (not a governance gate). Shipped by @sargonpiraev/eslint-config.",
   "type": "object",
   "required": ["name", "tags", "targets"],
   "properties": {
@@ -49,7 +49,7 @@
         "git:status": { "type": "object" },
         "test:pulumi": {
           "type": "object",
-          "description": "Always required. Pulumi mocks, or a noop when the repo has no stack."
+          "description": "Always required. index-clusters + Pulumi mocks; never noop."
         }
       },
       "additionalProperties": true

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Project/shared package.json test scripts",
-  "description": "Required npm script names for project/shared package.json. Checks use the test:* namespace; build is separate. Use test:eslint (never test:lint). test:alint is required (FS presence). test:format must be prettier --check (not write-only / noop). Shared Prettier is via root prettier.config.mjs (not package.json prettier key) — inventory enforces the file + @sargonpiraev/prettier-config dep. prepare must run lefthook install (hooks after npm ci/install). Optional Playwright lane scripts (test:functional / test:seo / test:analytics / test:cwv) when the project has a webapp/docapp/extapp harness — inventory requires test:cwv when webapp/docapp (or flat-root playwright.config.ts) is present. test:pulumi is always required (Pulumi mocks, or a noop when the repo has no stack). Shipped by @sargonpiraev/eslint-config.",
+  "description": "Required npm script names for project/shared package.json. Checks use the test:* namespace; build is separate. Use test:eslint (never test:lint). test:alint is required (FS presence). test:format must be prettier --check (not write-only / noop). Shared Prettier is via root prettier.config.mjs (not package.json prettier key) — inventory enforces the file + @sargonpiraev/prettier-config dep. prepare must run lefthook install (hooks after npm ci/install). Optional Playwright lane scripts (test:functional / test:seo / test:analytics / test:cwv) when the project has a webapp/docapp/extapp harness — inventory requires test:cwv when webapp/docapp (or flat-root playwright.config.ts) is present. test:pulumi is always required (index-clusters + mocks; never noop). Shipped by @sargonpiraev/eslint-config.",
   "type": "object",
   "required": ["scripts", "engines"],
   "properties": {
@@ -74,7 +74,7 @@
         "test:pulumi": {
           "type": "string",
           "minLength": 1,
-          "description": "Always required. Pulumi mocks when pulumi/ exists (assert Webapp/Extapp/Mobapp type tokens). Noop when the repo has no stack."
+          "description": "Always required. pulumi/ is a MUST dir: run index-clusters (Webapp/Extapp/Mobapp constructed from index.ts when apps/<type> exists) plus Pulumi mocks. Do not noop."
         },
         "pulumi:preview": { "type": "string", "minLength": 1 },
         "pulumi:up": { "type": "string", "minLength": 1 }

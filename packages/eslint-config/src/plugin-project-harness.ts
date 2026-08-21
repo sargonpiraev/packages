@@ -11,7 +11,7 @@ import {
   TSCONFIG_PACKAGE_PREFIX,
 } from './canonical-apps.js'
 import { playwrightConfigRule } from './playwright-config-rule.js'
-
+import { missingPulumiIndexClusterMessages } from './pulumi-index-clusters.js'
 
 function projectRootFromFilename(filename: string): string {
   return path.dirname(filename)
@@ -80,7 +80,6 @@ function envExamplePath(root: string, appKey: string): string {
   return path.join(root, 'apps', appKey, '.env.example')
 }
 
-
 /** Active (non-negation) gitignore patterns from file text. */
 export function parseGitignorePatterns(text: string): string[] {
   return text
@@ -124,12 +123,7 @@ export function patternCoversPulumiState(pattern: string): boolean {
 /** Root .gitignore must not ignore the whole pulumi/ IaC tree. */
 export function patternIgnoresWholePulumiTree(pattern: string): boolean {
   const p = normalizeGitignorePattern(pattern)
-  return (
-    p === 'pulumi' ||
-    p === '/pulumi' ||
-    p === 'pulumi/**' ||
-    p === '/pulumi/**'
-  )
+  return p === 'pulumi' || p === '/pulumi' || p === 'pulumi/**' || p === '/pulumi/**'
 }
 
 /** True when pattern ignores lefthook-local.yml / .yaml (personal Lefthook overrides). */
@@ -162,8 +156,7 @@ export type PulumiGitignoreStatus = {
  */
 export function getPulumiGitignoreStatus(root: string): PulumiGitignoreStatus {
   const pulumiDir = path.join(root, 'pulumi')
-  const hasPulumi =
-    fs.existsSync(pulumiDir) && fs.statSync(pulumiDir).isDirectory()
+  const hasPulumi = fs.existsSync(pulumiDir) && fs.statSync(pulumiDir).isDirectory()
   if (!hasPulumi) {
     return {
       hasPulumi: false,
@@ -174,9 +167,7 @@ export function getPulumiGitignoreStatus(root: string): PulumiGitignoreStatus {
   }
 
   const rootPatterns = readGitignorePatterns(path.join(root, '.gitignore'))
-  const nestedPatterns = readGitignorePatterns(
-    path.join(pulumiDir, '.gitignore'),
-  )
+  const nestedPatterns = readGitignorePatterns(path.join(pulumiDir, '.gitignore'))
   const combined = [...rootPatterns, ...nestedPatterns]
 
   return {
@@ -198,18 +189,14 @@ const inventoryRule: Rule.RuleModule = {
     messages: {
       missingPrettierConfig:
         'missing prettier.config.mjs (export default from "{{pkg}}"; do not use package.json "prettier" key).',
-      missingPrettierDep:
-        'package.json must list "{{pkg}}" in dependencies or devDependencies.',
+      missingPrettierDep: 'package.json must list "{{pkg}}" in dependencies or devDependencies.',
       leftoverPrettierKey:
         'package.json must not set "prettier" — use prettier.config.mjs exporting "{{pkg}}" instead.',
-      missingCommitlintConfig:
-        'missing commitlint.config.cjs (extends: ["{{pkg}}"]).',
-      missingCommitlintDep:
-        'package.json must list "{{pkg}}" in dependencies or devDependencies.',
+      missingCommitlintConfig: 'missing commitlint.config.cjs (extends: ["{{pkg}}"]).',
+      missingCommitlintDep: 'package.json must list "{{pkg}}" in dependencies or devDependencies.',
       missingEslintConfig:
         'missing eslint.config.mjs (import/spread "{{pkg}}/project" or "{{pkg}}/project-meta").',
-      missingEslintDep:
-        'package.json must list "{{pkg}}" in dependencies or devDependencies.',
+      missingEslintDep: 'package.json must list "{{pkg}}" in dependencies or devDependencies.',
       missingTsconfig: '{{reason}}',
       missingLefthook:
         'missing lefthook.yml (remotes → sargonpiraev/shared configs: [ci/lefthook.yml]; hooks via scripts.prepare → lefthook install).',
@@ -225,8 +212,7 @@ const inventoryRule: Rule.RuleModule = {
       missingEnvExample:
         'env-contract app "{{app}}" requires {{path}} (hand-maintained; no secrets).',
       missingPulumiYaml: 'pulumi/ exists but pulumi/Pulumi.yaml is missing.',
-      missingPulumiEntry:
-        'pulumi/ exists but TypeScript entry missing (index.ts or src/index.ts).',
+      missingPulumiEntry: 'pulumi/ exists but TypeScript entry missing (index.ts or src/index.ts).',
       missingPulumiScripts:
         'pulumi/ exists but package.json scripts must include pulumi:preview and pulumi:up.',
       missingPulumiEnvExample:
@@ -237,6 +223,7 @@ const inventoryRule: Rule.RuleModule = {
         'pulumi/ exists but .gitignore must ignore local state .pulumi/ (e.g. .pulumi/, **/.pulumi/, or pulumi/.pulumi/).',
       pulumiGitignoreWholeTree:
         'pulumi/ exists: do not gitignore the whole pulumi/ source tree — ignore secrets/state only (.env, .pulumi/).',
+      missingPulumiAppCluster: '{{reason}}',
       npmrcToken:
         'committed .npmrc must not contain npm tokens / auth (use Trusted Publishing OIDC).',
       missingTestCwv:
@@ -339,9 +326,7 @@ const inventoryRule: Rule.RuleModule = {
           context.report({ node, messageId: 'missingLefthookPrepare' })
         }
 
-        const rootGitignorePatterns = readGitignorePatterns(
-          path.join(root, '.gitignore'),
-        )
+        const rootGitignorePatterns = readGitignorePatterns(path.join(root, '.gitignore'))
         if (!rootGitignorePatterns.some(patternCoversLefthookLocal)) {
           context.report({ node, messageId: 'missingLefthookLocalGitignore' })
         }
@@ -367,11 +352,7 @@ const inventoryRule: Rule.RuleModule = {
         const npmrcPath = path.join(root, '.npmrc')
         if (fs.existsSync(npmrcPath)) {
           const npmrc = fs.readFileSync(npmrcPath, 'utf8')
-          if (
-            /(_authToken|authToken|NPM_TOKEN|\/\/registry\.npmjs\.org\/:_auth)/i.test(
-              npmrc,
-            )
-          ) {
+          if (/(_authToken|authToken|NPM_TOKEN|\/\/registry\.npmjs\.org\/:_auth)/i.test(npmrc)) {
             context.report({ node, messageId: 'npmrcToken' })
           }
         }
@@ -383,9 +364,7 @@ const inventoryRule: Rule.RuleModule = {
               messageId: 'forbiddenApp',
               data: { name },
             })
-          } else if (
-            !(CANONICAL_APP_NAMES as readonly string[]).includes(name)
-          ) {
+          } else if (!(CANONICAL_APP_NAMES as readonly string[]).includes(name)) {
             context.report({
               node,
               messageId: 'unknownApp',
@@ -402,7 +381,6 @@ const inventoryRule: Rule.RuleModule = {
         if (hasNext && diskApps.length === 0) {
           context.report({ node, messageId: 'flatNextForbidden' })
         }
-
 
         if (!fs.existsSync(path.join(root, 'turbo.json'))) {
           context.report({ node, messageId: 'missingTurbo' })
@@ -435,6 +413,21 @@ const inventoryRule: Rule.RuleModule = {
           if (!gi.coversState) {
             context.report({ node, messageId: 'missingPulumiGitignoreState' })
           }
+          const pulumiEntry = fs.existsSync(entryPath)
+            ? entryPath
+            : fs.existsSync(fallback)
+              ? fallback
+              : ''
+          if (pulumiEntry) {
+            const indexSource = fs.readFileSync(pulumiEntry, 'utf8')
+            for (const reason of missingPulumiIndexClusterMessages(root, indexSource)) {
+              context.report({
+                node,
+                messageId: 'missingPulumiAppCluster',
+                data: { reason },
+              })
+            }
+          }
         }
 
         for (const app of diskApps) {
@@ -457,7 +450,6 @@ const inventoryRule: Rule.RuleModule = {
     }
   },
 }
-
 
 const workflowTokenRule: Rule.RuleModule = {
   meta: {
@@ -492,8 +484,7 @@ const workflowTokenRule: Rule.RuleModule = {
             })
           }
         }
-        const publishes =
-          /npm publish|multi-semantic-release|semantic-release/i.test(text)
+        const publishes = /npm publish|multi-semantic-release|semantic-release/i.test(text)
         if (publishes && !/id-token:\s*write/.test(text)) {
           context.report({ node, messageId: 'missingIdToken' })
         }
@@ -520,9 +511,7 @@ const pulumiGitignoreRule: Rule.RuleModule = {
     },
   },
   create(context) {
-    const diskPath =
-      context.physicalFilename ||
-      context.filename.replace(/\/\d+\.js$/, '')
+    const diskPath = context.physicalFilename || context.filename.replace(/\/\d+\.js$/, '')
     const root = path.dirname(diskPath)
     return {
       Program(node) {

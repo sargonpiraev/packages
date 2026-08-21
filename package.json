@@ -16,7 +16,7 @@
     "pulumi:preview": "npm --prefix pulumi run preview",
     "pulumi:up": "npm --prefix pulumi run up",
     "release": "multi-semantic-release",
-    "test": "turbo run test",
+    "test": "turbo run test && npm run test:pulumi",
     "test:alint": "alint check",
     "test:check-types": "npm run check-types",
     "test:format": "prettier --check \"**/*.{ts,tsx,md,json}\"",

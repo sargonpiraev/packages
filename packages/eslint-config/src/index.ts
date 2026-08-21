@@ -29,5 +29,6 @@ export {
   testMatchCoversSuite,
   hasSuiteSpecFile,
 } from './playwright-config-rule.js'
+export { missingPulumiIndexClusterMessages, stripTsComments } from './pulumi-index-clusters.js'
 export { default as project } from './project.js'
 export { default as projectMeta } from './project-meta.js'
