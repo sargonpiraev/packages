@@ -21,6 +21,13 @@ describe('missingPulumiIndexClusterMessages', () => {
     )
   })
 
+  it('skips Webapp when pulumi/defer-webapp-cluster is non-empty', () => {
+    const root = tmpRepo(['webapp'])
+    fs.mkdirSync(path.join(root, 'pulumi'))
+    fs.writeFileSync(path.join(root, 'pulumi', 'defer-webapp-cluster'), 'parked\n')
+    assert.deepEqual(missingPulumiIndexClusterMessages(root, 'export const x = 1'), [])
+  })
+
   it('passes when index constructs Webapp', () => {
     assert.deepEqual(
       missingPulumiIndexClusterMessages(tmpRepo(['webapp']), 'createWebappProductAnalytics({})'),

@@ -9,15 +9,26 @@ export function stripTsComments(source: string): string {
   return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
 }
 
+export const WEBAPP_CLUSTER_DEFER_FILE = 'defer-webapp-cluster'
+
 function hasAppDir(repoRoot: string, appType: string): boolean {
   return fs.existsSync(path.join(repoRoot, 'apps', appType))
+}
+
+export function defersWebappCluster(repoRoot: string): boolean {
+  const marker = path.join(repoRoot, 'pulumi', WEBAPP_CLUSTER_DEFER_FILE)
+  return fs.existsSync(marker) && fs.readFileSync(marker, 'utf8').trim().length > 0
 }
 
 /** Gaps when `pulumi/index.ts` does not construct the cluster for an `apps/<type>` dir. */
 export function missingPulumiIndexClusterMessages(repoRoot: string, indexSource: string): string[] {
   const src = stripTsComments(indexSource)
   const missing: string[] = []
-  if ((hasAppDir(repoRoot, 'webapp') || hasAppDir(repoRoot, 'docapp')) && !WEBAPP_CALL.test(src)) {
+  if (
+    (hasAppDir(repoRoot, 'webapp') || hasAppDir(repoRoot, 'docapp')) &&
+    !defersWebappCluster(repoRoot) &&
+    !WEBAPP_CALL.test(src)
+  ) {
     missing.push(
       'apps/webapp (or apps/docapp) requires createWebappProductAnalytics(...) or new Webapp(...) in pulumi/index.ts'
     )

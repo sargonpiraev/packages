@@ -1,4 +1,14 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import { repoHasApp, repoHasExtapp, repoHasMobapp, repoHasWebapp } from './repo-has-app.js'
+
+/** Non-empty file under `pulumi/` parks the Webapp GSC/GA4/Vercel cluster. */
+export const WEBAPP_CLUSTER_DEFER_FILE = 'defer-webapp-cluster'
+
+export function defersWebappCluster(repoRoot: string): boolean {
+  const marker = path.join(repoRoot, 'pulumi', WEBAPP_CLUSTER_DEFER_FILE)
+  return fs.existsSync(marker) && fs.readFileSync(marker, 'utf8').trim().length > 0
+}
 
 const WEBAPP_CALL = /\b(?:createWebappProductAnalytics|new\s+Webapp)\s*\(/
 const EXTAPP_CALL = /\b(?:createExtappProductAnalytics|new\s+Extapp)\s*\(/
@@ -20,6 +30,7 @@ export function assertIndexInstantiatesAppClusters(args: {
   const missing: string[] = []
   if (
     (repoHasWebapp(args.repoRoot) || repoHasApp(args.repoRoot, 'docapp')) &&
+    !defersWebappCluster(args.repoRoot) &&
     !WEBAPP_CALL.test(src)
   ) {
     missing.push(

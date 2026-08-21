@@ -64,6 +64,21 @@ describe('assertIndexInstantiatesAppClusters', () => {
     ).toThrow('createExtappProductAnalytics')
   })
 
+  it('skips Webapp when pulumi/defer-webapp-cluster is non-empty', () => {
+    const root = tmpRepo(['webapp'])
+    fs.mkdirSync(path.join(root, 'pulumi'))
+    fs.writeFileSync(
+      path.join(root, 'pulumi', 'defer-webapp-cluster'),
+      'parked: no live GSC URL yet\n'
+    )
+    expect(() =>
+      assertIndexInstantiatesAppClusters({
+        repoRoot: root,
+        indexSource: 'export const x = 1',
+      })
+    ).not.toThrow()
+  })
+
   it('does not require a cluster when the app dir is absent', () => {
     expect(() =>
       assertIndexInstantiatesAppClusters({

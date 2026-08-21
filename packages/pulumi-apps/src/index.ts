@@ -47,4 +47,8 @@ export { repoHasApp } from './internal/repo-has-app.js'
 
 export { gcpProjectIdFromServiceAccountKeyB64 } from './internal/sa-key.js'
 
-export { assertIndexInstantiatesAppClusters } from './internal/assert-index-clusters.js'
+export {
+  assertIndexInstantiatesAppClusters,
+  defersWebappCluster,
+  WEBAPP_CLUSTER_DEFER_FILE,
+} from './internal/assert-index-clusters.js'
